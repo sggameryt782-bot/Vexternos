@@ -2,110 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My Control Panel</title>
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
-}
-
-/* Header */
-.header {
-  background: #1e293b;
-  padding: 15px;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-/* Card */
-.card {
-  background: #1e293b;
-  margin: 15px;
-  padding: 20px;
-  border-radius: 12px;
-}
-
-/* Status */
-.status {
-  text-align: center;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  background: red;
-}
-
-/* Button */
-.btn {
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  width: 100%;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.start {
-  background: #22c55e;
-}
-
-.stop {
-  background: #ef4444;
-}
-
-/* Input */
-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  margin-top: 10px;
-}
-
-/* Box */
-.box {
-  background: #0f172a;
-  padding: 10px;
-  border-radius: 8px;
-  margin-top: 10px;
-}
-</style>
-
+<title>Pro Hosting Panel</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="header">⚡ My Server Panel</div>
-
-<div class="card">
-  <h3>Server Status</h3>
-  <div class="status">🔴 Offline</div>
-  <button class="btn start">Start Server</button>
-  <button class="btn stop">Stop Server</button>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>⚡ Nova Panel</h2>
+  <a onclick="showPage('dashboard')">🏠 Dashboard</a>
+  <a onclick="showPage('console')">💻 Console</a>
+  <a onclick="showPage('files')">📂 Files</a>
+  <a onclick="showPage('settings')">⚙️ Settings</a>
 </div>
 
-<div class="card">
-  <h3>Address</h3>
-  <div class="box">myserver.aternos.me:12345</div>
+<!-- MAIN -->
+<div class="main">
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="page active">
+  <div class="card">
+    <h2>Server Status</h2>
+    <div class="status offline">🔴 Offline</div>
+
+    <button class="btn start">Start Server</button>
+    <button class="btn stop">Stop Server</button>
+    <button class="btn restart">Restart Server</button>
+  </div>
+
+  <div class="card">
+    <h3>Performance</h3>
+    <div class="bar"><div class="fill"></div></div>
+  </div>
 </div>
 
-<div class="card">
-  <h3>Software</h3>
-  <div class="box">PaperMC</div>
+<!-- CONSOLE -->
+<div id="console" class="page">
+  <div class="card">
+    <h2>Console</h2>
+    <div class="console-box">> Server logs...</div>
+    <input placeholder="Enter command...">
+    <button class="btn send">Send</button>
+  </div>
 </div>
 
-<div class="card">
-  <h3>Version</h3>
-  <div class="box">1.21.1</div>
+<!-- FILES -->
+<div id="files" class="page">
+  <div class="card">
+    <h2>File Manager</h2>
+    <button class="btn">Upload</button>
+    <button class="btn">Delete</button>
+  </div>
 </div>
 
-<div class="card">
-  <h3>Console</h3>
-  <input placeholder="Enter command...">
+<!-- SETTINGS -->
+<div id="settings" class="page">
+  <div class="card">
+    <h2>Settings</h2>
+    <label>Server Name</label>
+    <input placeholder="My Server">
+
+    <label>RAM (GB)</label>
+    <input type="range" min="1" max="16">
+  </div>
 </div>
 
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
