@@ -5,37 +5,34 @@ body {
   color: white;
 }
 
-.container {
-  padding: 15px;
-}
-
 /* HEADER */
 .header {
   background: #26343d;
   padding: 15px;
   text-align: center;
+  font-size: 18px;
 }
 
-/* SERVER BOX */
-.server-box {
+/* SERVER */
+.server {
   text-align: center;
   margin: 20px 0;
 }
 
 .connect {
-  padding: 10px;
   background: #3b4f5a;
   border: none;
+  padding: 10px;
   border-radius: 8px;
   color: white;
 }
 
 /* STATUS */
 .status {
-  text-align: center;
+  margin: 10px;
   padding: 12px;
+  text-align: center;
   border-radius: 8px;
-  margin: 10px 0;
 }
 
 .offline {
@@ -44,57 +41,65 @@ body {
 
 /* BOOST */
 .boost {
-  background: #2563eb;
+  margin: 10px;
   padding: 15px;
+  background: #2563eb;
   border-radius: 10px;
-  margin: 15px 0;
 }
 
 .boost button {
   margin-top: 10px;
   padding: 8px;
   border: none;
-  background: white;
-  color: black;
   border-radius: 6px;
 }
 
-/* START BUTTON */
-.start-btn {
-  width: 100%;
+/* START */
+.start {
+  width: 90%;
+  margin: 10px auto;
+  display: block;
   padding: 15px;
   background: #22c55e;
   border: none;
   border-radius: 10px;
   font-size: 18px;
-  margin: 10px 0;
 }
 
-/* CARD */
+/* CARDS */
 .card {
+  margin: 10px;
   background: #2c3e47;
   border-radius: 10px;
-  margin-top: 15px;
   overflow: hidden;
 }
 
-.card-header {
+.title {
   background: #1f2c34;
   padding: 10px;
-  font-weight: bold;
 }
 
-.card-body {
+.content {
   padding: 15px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
-.copy, .change {
-  background: #22c55e;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  color: white;
+/* NAV */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #26343d;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+}
+
+.bottom-nav span {
+  opacity: 0.6;
+}
+
+.bottom-nav .active {
+  opacity: 1;
 }
