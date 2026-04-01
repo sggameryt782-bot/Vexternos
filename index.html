@@ -3,86 +3,72 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Minecraft Panel OP</title>
+<title>MC Panel OP+</title>
+
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #0f172a;
-    color: #fff;
-}
-.container {
-    display: flex;
-    height: 100vh;
-}
+body { margin:0; font-family:Arial; background:#0f172a; color:#fff; }
+.container { display:flex; height:100vh; }
+
 .sidebar {
-    width: 250px;
-    background: #020617;
-    padding: 20px;
+    width:260px;
+    background:#020617;
+    padding:20px;
 }
-.sidebar h2 {
-    color: #38bdf8;
-}
+.sidebar h2 { color:#38bdf8; }
 .sidebar button {
-    width: 100%;
-    margin: 10px 0;
-    padding: 10px;
-    background: #1e293b;
-    border: none;
-    color: white;
-    cursor: pointer;
+    width:100%;
+    margin:6px 0;
+    padding:10px;
+    background:#1e293b;
+    border:none;
+    color:white;
+    cursor:pointer;
 }
-.main {
-    flex: 1;
-    padding: 20px;
-}
+.sidebar button.active { background:#38bdf8; }
+
+.main { flex:1; padding:20px; overflow:auto; }
+
 .card {
-    background: #1e293b;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+    background:#1e293b;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
 }
-button.action {
-    margin: 5px;
-    padding: 10px;
-    background: #38bdf8;
-    border: none;
-    cursor: pointer;
-}
-#auth {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-.auth-box {
-    background: #1e293b;
-    padding: 30px;
-    border-radius: 10px;
-}
-input {
-    display: block;
-    margin: 10px 0;
-    padding: 10px;
-    width: 200px;
-}
-.hidden { display: none; }
+
+.hidden { display:none; }
+
 .console {
-    background: black;
-    height: 150px;
-    overflow-y: auto;
-    padding: 10px;
-    font-family: monospace;
+    background:black;
+    height:200px;
+    overflow:auto;
+    padding:10px;
+    font-family:monospace;
 }
+
+input, select {
+    padding:8px;
+    margin:5px 0;
+}
+
+button.action {
+    padding:8px;
+    margin:5px;
+    background:#38bdf8;
+    border:none;
+    cursor:pointer;
+}
+
+#auth { display:flex; justify-content:center; align-items:center; height:100vh; }
+.auth-box { background:#1e293b; padding:30px; border-radius:10px; }
 </style>
 </head>
 
 <body>
 
-<!-- AUTH -->
+<!-- AUTH (UNCHANGED) -->
 <div id="auth">
     <div class="auth-box">
-        <h2 id="authTitle">Register</h2>
+        <h2>Register / Login</h2>
         <input id="username" placeholder="Username">
         <input id="password" type="password" placeholder="Password">
         <button onclick="register()">Register</button>
@@ -92,150 +78,193 @@ input {
 
 <!-- PANEL -->
 <div id="panel" class="hidden">
-    <div class="container">
-        <div class="sidebar">
-            <h2>MC Panel OP</h2>
-            <button onclick="showTab('dashboard')">Dashboard</button>
-            <button onclick="showTab('consoleTab')">Console</button>
-            <button onclick="showTab('files')">Files</button>
-            <button onclick="logout()">Logout</button>
-        </div>
+<div class="container">
 
-        <div class="main">
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>MC OP+</h2>
+    <button onclick="openTab('dashboard', this)">Dashboard</button>
+    <button onclick="openTab('consoleTab', this)">Console</button>
+    <button onclick="openTab('files', this)">Files</button>
+    <button onclick="openTab('plugins', this)">Plugins</button>
+    <button onclick="openTab('backups', this)">Backups</button>
+    <button onclick="openTab('scheduler', this)">Scheduler</button>
+    <button onclick="openTab('database', this)">Database</button>
+    <button onclick="openTab('network', this)">Network</button>
+    <button onclick="openTab('analytics', this)">Analytics</button>
+    <button onclick="logout()">Logout</button>
+</div>
 
-            <!-- DASHBOARD -->
-            <div id="dashboard">
-                <div class="card">
-                    <h3>Status: <span id="status">OFFLINE</span></h3>
-                    <button class="action" onclick="startServer()">Start</button>
-                    <button class="action" onclick="stopServer()">Stop</button>
-                    <button class="action" onclick="restartServer()">Restart</button>
-                </div>
+<!-- MAIN -->
+<div class="main">
 
-                <div class="card">
-                    <h3>Settings</h3>
-                    RAM: <input type="range" min="1" max="16" value="4" onchange="setRAM(this.value)">
-                    <span id="ramVal">4GB</span>
-                    <br><br>
-                    Version:
-                    <select onchange="setVersion(this.value)">
-                        <option>1.20</option>
-                        <option>1.19</option>
-                        <option>1.18</option>
-                    </select>
-                </div>
+<!-- DASHBOARD -->
+<div id="dashboard" class="tab">
+<div class="card">
+<h3>Status: <span id="status">OFFLINE</span></h3>
+<button class="action" onclick="startServer()">Start</button>
+<button class="action" onclick="stopServer()">Stop</button>
+<button class="action" onclick="restartServer()">Restart</button>
+</div>
+</div>
 
-                <div class="card">
-                    <h3>Players</h3>
-                    <ul id="players">
-                        <li>Steve</li>
-                        <li>Alex</li>
-                    </ul>
-                </div>
-            </div>
+<!-- CONSOLE -->
+<div id="consoleTab" class="tab hidden">
+<div class="card">
+<h3>Console</h3>
+<div class="console" id="console"></div>
+<input id="cmd">
+<button onclick="sendCommand()">Send</button>
+</div>
+</div>
 
-            <!-- CONSOLE -->
-            <div id="consoleTab" class="hidden">
-                <div class="card">
-                    <h3>Console</h3>
-                    <div class="console" id="console"></div>
-                    <input id="cmd" placeholder="Enter command">
-                    <button onclick="sendCommand()">Send</button>
-                </div>
-            </div>
+<!-- FILES -->
+<div id="files" class="tab hidden">
+<div class="card">
+<h3>File Manager</h3>
+<ul id="fileList"></ul>
+<button onclick="addFile()">Add File</button>
+</div>
+</div>
 
-            <!-- FILES -->
-            <div id="files" class="hidden">
-                <div class="card">
-                    <h3>Files</h3>
-                    <ul>
-                        <li>server.properties</li>
-                        <li>world/</li>
-                        <li>plugins/</li>
-                    </ul>
-                </div>
-            </div>
+<!-- PLUGINS -->
+<div id="plugins" class="tab hidden">
+<div class="card">
+<h3>Plugins</h3>
+<input id="pluginName" placeholder="Plugin name">
+<button onclick="installPlugin()">Install</button>
+<ul id="pluginsList"></ul>
+</div>
+</div>
 
-        </div>
-    </div>
+<!-- BACKUPS -->
+<div id="backups" class="tab hidden">
+<div class="card">
+<h3>Backups</h3>
+<button onclick="createBackup()">Create Backup</button>
+<ul id="backupList"></ul>
+</div>
+</div>
+
+<!-- SCHEDULER -->
+<div id="scheduler" class="tab hidden">
+<div class="card">
+<h3>Scheduler</h3>
+<input id="task" placeholder="Command">
+<button onclick="addTask()">Add Task</button>
+<ul id="taskList"></ul>
+</div>
+</div>
+
+<!-- DATABASE -->
+<div id="database" class="tab hidden">
+<div class="card">
+<h3>Database</h3>
+<button onclick="connectDB()">Connect</button>
+<p id="dbStatus">Disconnected</p>
+</div>
+</div>
+
+<!-- NETWORK -->
+<div id="network" class="tab hidden">
+<div class="card">
+<h3>Network</h3>
+<p>IP: 127.0.0.1</p>
+<p>Port: 25565</p>
+<button onclick="changeIP()">Change IP</button>
+</div>
+</div>
+
+<!-- ANALYTICS -->
+<div id="analytics" class="tab hidden">
+<div class="card">
+<h3>Analytics</h3>
+<p>CPU: <span id="cpu">10%</span></p>
+<p>RAM: <span id="ram">2GB</span></p>
+<button onclick="updateStats()">Refresh</button>
+</div>
+</div>
+
+</div>
+</div>
 </div>
 
 <script>
-let serverOn = false;
-
 // AUTH
-function register() {
-    let u = username.value;
-    let p = password.value;
-    localStorage.setItem(u, p);
-    alert("Registered!");
-}
-
-function login() {
-    let u = username.value;
-    let p = password.value;
-    if (localStorage.getItem(u) === p) {
-        auth.style.display = "none";
+function register(){ localStorage.setItem(username.value,password.value); alert("Registered"); }
+function login(){
+    if(localStorage.getItem(username.value)===password.value){
+        auth.style.display="none";
         panel.classList.remove("hidden");
-    } else {
-        alert("Wrong login");
-    }
+    } else alert("Wrong");
+}
+function logout(){ location.reload(); }
+
+// TAB SYSTEM
+function openTab(id,btn){
+    document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
+
+    document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
 }
 
-function logout() {
-    location.reload();
-}
-
-// TABS
-function showTab(tab) {
-    ["dashboard","consoleTab","files"].forEach(t=>{
-        document.getElementById(t).classList.add("hidden");
-    });
-    document.getElementById(tab).classList.remove("hidden");
-}
-
-// SERVER CONTROL
-function startServer() {
-    serverOn = true;
-    status.innerText = "ONLINE";
-    log("Server started");
-}
-
-function stopServer() {
-    serverOn = false;
-    status.innerText = "OFFLINE";
-    log("Server stopped");
-}
-
-function restartServer() {
-    log("Restarting...");
-    setTimeout(()=>{
-        log("Server restarted");
-    },1000);
-}
-
-// SETTINGS
-function setRAM(val) {
-    ramVal.innerText = val + "GB";
-    log("RAM set to " + val);
-}
-
-function setVersion(v) {
-    log("Version set to " + v);
-}
+// SERVER
+function startServer(){ status.innerText="ONLINE"; log("Started"); }
+function stopServer(){ status.innerText="OFFLINE"; log("Stopped"); }
+function restartServer(){ log("Restarting..."); setTimeout(()=>log("Restarted"),1000); }
 
 // CONSOLE
-function log(msg) {
-    let c = document.getElementById("console");
-    c.innerHTML += msg + "<br>";
-    c.scrollTop = c.scrollHeight;
+function log(msg){
+    console.innerHTML+=msg+"<br>";
+    console.scrollTop=console.scrollHeight;
+}
+function sendCommand(){ log("> "+cmd.value); }
+
+// FILES
+function addFile(){
+    let li=document.createElement("li");
+    li.innerText="new_file.txt";
+    fileList.appendChild(li);
 }
 
-function sendCommand() {
-    let cmd = document.getElementById("cmd").value;
-    log("> " + cmd);
+// PLUGINS
+function installPlugin(){
+    let li=document.createElement("li");
+    li.innerText=pluginName.value;
+    pluginsList.appendChild(li);
+}
+
+// BACKUPS
+function createBackup(){
+    let li=document.createElement("li");
+    li.innerText="Backup "+Date.now();
+    backupList.appendChild(li);
+}
+
+// SCHEDULER
+function addTask(){
+    let li=document.createElement("li");
+    li.innerText=task.value;
+    taskList.appendChild(li);
+}
+
+// DATABASE
+function connectDB(){
+    dbStatus.innerText="Connected";
+}
+
+// NETWORK
+function changeIP(){
+    alert("IP Changed (mock)");
+}
+
+// ANALYTICS
+function updateStats(){
+    cpu.innerText=Math.floor(Math.random()*100)+"%";
+    ram.innerText=Math.floor(Math.random()*16)+"GB";
 }
 </script>
 
 </body>
-    </html>
+</html>
