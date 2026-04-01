@@ -1,216 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaHost Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHERPANEL • NeonCraft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Space+Grotesk:wght@500&amp;display=swap');
+        
+        :root {
+            --neon-cyan: #00f7ff;
+            --neon-purple: #c026d3;
+        }
+        
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .tail-container * {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .logo-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
 
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-body {
-    background:#0b0f13;
-    color:white;
-    font-family:sans-serif;
-    margin:0;
-}
-
-/* Sidebar */
-.sidebar {
-    width:260px;
-    background:#161b22;
-    height:100vh;
-    position:fixed;
-    left:-300px;
-    top:0;
-    transition:0.4s;
-    z-index:50;
-}
-.sidebar.active {
-    left:0;
-}
-
-/* Overlay */
-.overlay {
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.5);
-    display:none;
-    z-index:40;
-}
-.overlay.active {
-    display:block;
-}
-
-/* Nav */
-.nav-item {
-    padding:12px 20px;
-    cursor:pointer;
-    color:#aaa;
-    transition:0.3s;
-}
-.nav-item:hover {
-    color:#3b82f6;
-    transform:translateX(5px);
-}
-
-/* Page */
-.page {display:none;}
-.page.active {display:block;}
-
-/* Buttons */
-.btn {
-    padding:10px;
-    border-radius:10px;
-    font-weight:bold;
-    transition:0.2s;
-}
-.btn:active {transform:scale(0.95);}
-
-</style>
+        .glass {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        
+        .neon-glow {
+            box-shadow: 0 0 20px -5px rgb(0 247 255),
+                        0 0 30px -10px rgb(192 38 211);
+        }
+        
+        .neon-text {
+            text-shadow: 0 0 10px rgb(0 247 255);
+        }
+        
+        .sidebar {
+            transition: all 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        
+        .tab-content {
+            animation: fadeIn 0.4s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .console-line {
+            animation: consolePop 0.3s ease;
+        }
+        
+        .status-dot {
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        
+        .bottom-nav {
+            box-shadow: 0 -4px 15px -5px rgb(0 247 255);
+        }
+    </style>
 </head>
+<body class="tail-container bg-[#0a1428] text-white min-h-screen flex flex-col">
+    <!-- HEADER -->
+    <div class="glass border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-6 py-4 flex items-center justify-between">
+            <!-- Logo + Server Name -->
+            <div class="flex items-center gap-x-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-[#00f7ff] to-[#c026d3] rounded-2xl flex items-center justify-center neon-glow">
+                    <i class="fa-solid fa-cube text-[#0a1428] text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="logo-font text-3xl tracking-tighter neon-text">AETHERPANEL</h1>
+                    <p class="text-xs text-white/60 -mt-1">NEONCRAFT • 1.21.4</p>
+                </div>
+                
+                <!-- Status -->
+                <div onclick="toggleServerStatus()" id="header-status" class="ml-8 flex items-center gap-x-2 px-4 py-1.5 rounded-3xl glass border border-white/20 cursor-pointer">
+                    <div id="status-dot" class="w-3 h-3 bg-red-500 rounded-full status-dot"></div>
+                    <span id="status-text" class="text-sm font-medium">OFFLINE</span>
+                    <i id="status-icon" class="fa-solid fa-power-off text-red-500"></i>
+                </div>
+            </div>
 
-<body>
+            <!-- Right side controls -->
+            <div class="flex items-center gap-x-6">
+                <!-- Players -->
+                <div class="hidden md:flex items-center gap-x-2 bg-white/5 px-5 py-2 rounded-3xl border border-white/10">
+                    <i class="fa-solid fa-users text-[#00f7ff]"></i>
+                    <span id="online-players" class="font-medium">0/32</span>
+                </div>
 
-<!-- Overlay -->
-<div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+                <!-- Queue -->
+                <div id="queue-pill" onclick="showQueue()" class="hidden items-center gap-x-2 px-5 py-2 rounded-3xl border border-amber-400/30 bg-amber-400/10 text-amber-400 text-sm font-medium cursor-pointer">
+                    <i class="fa-solid fa-clock animate-pulse"></i>
+                    <span id="queue-text">IN QUEUE • 4/12</span>
+                </div>
 
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-    <h2 style="padding:20px;">⚡ NovaHost</h2>
+                <!-- Sound toggle -->
+                <button onclick="toggleSound()" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-xl"></i>
+                </button>
 
-    <div class="nav-item" onclick="showPage('home')">Dashboard</div>
-    <div class="nav-item" onclick="showPage('console')">Console</div>
-    <div class="nav-item" onclick="showPage('files')">Files</div>
-    <div class="nav-item" onclick="showPage('players')">Players</div>
-    <div class="nav-item" onclick="showPage('backup')">Backups</div>
-    <div class="nav-item" onclick="showPage('settings')">Settings</div>
-</div>
+                <!-- Notifications -->
+                <button onclick="showNotifications()" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 relative">
+                    <i class="fa-solid fa-bell text-xl"></i>
+                    <span id="notif-badge" class="absolute -top-1 -right-1 bg-[#c026d3] text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">3</span>
+                </button>
 
-<!-- Main -->
-<div style="margin-left:0; padding:20px;">
+                <!-- User -->
+                <div class="flex items-center gap-x-2">
+                    <div class="text-right">
+                        <p class="text-sm font-medium">Ishan</p>
+                        <p class="text-xs text-white/50">Premium • VIP</p>
+                    </div>
+                    <div class="w-9 h-9 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-2xl flex items-center justify-center text-xl">👾</div>
+                </div>
 
-    <!-- Header -->
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <button onclick="toggleSidebar()" style="font-size:20px;">☰</button>
-
-        <div id="status" style="color:red;">● Offline</div>
-
-        <div>
-            <button onclick="startServer()" class="btn" style="background:green;">Start</button>
-            <button onclick="restartServer()" class="btn" style="background:orange;">Restart</button>
-            <button onclick="stopServer()" class="btn" style="background:red;">Stop</button>
+                <!-- Hamburger -->
+                <button onclick="toggleSidebar()" class="md:hidden w-11 h-11 flex items-center justify-center text-3xl">
+                    <i id="hamburger-icon" class="fa-solid fa-bars"></i>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Dashboard -->
-    <div id="page-home" class="page active">
-        <h2>Dashboard</h2>
-
-        <p>Server Address: myserver.novahost.me</p>
-
-        <h3>RAM Control</h3>
-        <input type="range" min="512" max="16384" value="2048" style="width:100%;">
-        <p>512MB → 16GB</p>
-    </div>
-
-    <!-- Console -->
-    <div id="page-console" class="page">
-        <h2>Console</h2>
-
-        <div style="background:black; height:200px; padding:10px; overflow:auto;">
-            <p>[System] Server offline</p>
+    <div class="flex flex-1 max-w-screen-2xl mx-auto w-full px-6 pb-6 gap-6 relative">
+        
+        <!-- SIDEBAR -->
+        <div id="sidebar" class="sidebar fixed md:static inset-y-0 left-0 z-50 w-72 glass border-r border-white/10 shadow-2xl md:shadow-none translate-x-[-110%] md:translate-x-0 flex flex-col">
+            
+            <!-- Mobile close -->
+            <div onclick="toggleSidebar()" class="md:hidden absolute top-6 right-6 text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></div>
+            
+            <div class="px-6 pt-8 flex-1 overflow-y-auto">
+                <nav class="space-y-1">
+                    <a onclick="switchTab(0)" id="nav-0" class="nav-item flex items-center gap-x-3 px-5 py-4 rounded-3xl hover:bg-white/10 active:bg-white/10 text-lg font-medium active-nav">
+                        <i class="fa-solid fa-house w-5"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a onclick="switchTab(1)" id="nav-1" class="nav-item flex items-center gap-x-3 px-5 py-4 rounded-3xl hover:bg-white/10 text-lg font-medium">
+                        <i class="fa-solid fa-terminal w-5"></i>
+                        <span>Console</span>
+                    </a>
+                    <a onclick="switchTab(2)" id="nav-2" class="nav-item flex items-center gap-x-3 px-5 py-4 rounded-3xl hover:bg-white/10 text-lg font-medium">
+                        <i class="fa-solid fa-folder-open w-5"></i>
+                        <span>File Manager</span>
+                    </a>
+                    <a onclick="switchTab(3)" id="nav-3" class="nav-item flex items-center gap-x-3 px-5 py-4 rounded-3xl hover:bg-white/10 text-lg font-medium">
+                        <i class="fa-solid fa-sliders w-5"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a onclick="switchTab(4)" id="nav-4" class="nav-item flex items-center gap-x-3 px-5 py-4 rounded-3xl hover:bg-white/10 text-lg font-medium">
+                        <i class="fa-solid fa-globe w-5"></i>
+                        <span>Network</span>
+                    </a>
+                    <a onclick="switchTab(5)" id="nav-5" class="nav-item flex items-center gap-x-3 px-5 py-4 rounded-3xl hover:bg-white/10 text-lg font-medium">
+                        <i class="fa-solid fa-plug w-5"></i>
+                        <span>Plugins</span>
+                        <span class="ml-auto px-3 py-px text-xs rounded-2xl bg-white/10 text-white/60">SOON</span>
+                    </a>
+                    
+                    <div class="pt-6 px-5">
+                        <div class="text-xs uppercase tracking-[1px] font-medium text-white/40 mb-3">Server Control</div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button onclick="startServer()" class="glass border border-emerald-400 hover:border-emerald-300 text-emerald-400 hover:text-white rounded-3xl py-4 flex flex-col items-center justify-center gap-y-1 neon-glow shadow-lg">
+                                <i class="fa-solid fa-play text-2xl"></i>
+                                <span class="text-xs font-bold">START</span>
+                            </button>
+                            <button onclick="stopServer()" class="glass border border-red-400 hover:border-red-300 text-red-400 hover:text-white rounded-3xl py-4 flex flex-col items-center justify-center gap-y-1">
+                                <i class="fa-solid fa-stop text-2xl"></i>
+                                <span class="text-xs font-bold">STOP</span>
+                            </button>
+                            <button onclick="restartServer()" class="glass border border-amber-400 hover:border-amber-300 text-amber-400 hover:text-white rounded-3xl py-4 flex flex-col items-center justify-center gap-y-1">
+                                <i class="fa-solid fa-rotate-right text-2xl"></i>
+                                <span class="text-xs font-bold">RESTART</span>
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            
+            <!-- Sidebar footer -->
+            <div class="p-6 border-t border-white/10 mt-auto">
+                <div class="flex items-center justify-between text-sm">
+                    <div class="flex items-center gap-x-2">
+                        <i class="fa-solid fa-server text-[#00f7ff]"></i>
+                        <span class="font-medium">NeonCraft</span>
+                    </div>
+                    <div onclick="logout()" class="flex items-center text-white/60 hover:text-white cursor-pointer">
+                        <i class="fa-solid fa-right-from-bracket mr-2"></i>
+                        <span>Logout</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <input type="text" placeholder="Command..." style="width:80%;">
-        <button class="btn" style="background:blue;">Send</button>
-    </div>
+        <!-- OVERLAY -->
+        <div onclick="if(event.target.id==='sidebar-overlay')toggleSidebar()" id="sidebar-overlay" class="hidden md:hidden fixed inset-0 bg-black/60 backdrop-blur-md z-40"></div>
 
-    <!-- Files -->
-    <div id="page-files" class="page">
-        <h2>File Manager</h2>
-        <p>Upload / Edit files</p>
-    </div>
-
-    <!-- Players -->
-    <div id="page-players" class="page">
-        <h2>🚧 Coming Soon</h2>
-    </div>
-
-    <!-- Backup -->
-    <div id="page-backup" class="page">
-        <h2>🚧 Coming Soon</h2>
-    </div>
-
-    <!-- Settings -->
-    <div id="page-settings" class="page">
-        <h2>Settings</h2>
-
-        <p>Max Players</p>
-        <input type="number" value="20">
-
-        <p>Server Name</p>
-        <input type="text" value="Nova Server">
-    </div>
-
-</div>
-
-<!-- JS -->
-<script>
-let open = false;
-
-function toggleSidebar(){
-    let s = document.getElementById("sidebar");
-    let o = document.getElementById("overlay");
-
-    open = !open;
-
-    if(open){
-        s.classList.add("active");
-        o.classList.add("active");
-    } else {
-        s.classList.remove("active");
-        o.classList.remove("active");
-    }
-}
-
-function showPage(page){
-    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-    document.getElementById("page-"+page).classList.add("active");
-}
-
-function startServer(){
-    let s = document.getElementById("status");
-    s.innerText="● Starting...";
-    s.style.color="yellow";
-
-    setTimeout(()=>{
-        s.innerText="● Online";
-        s.style.color="lime";
-    },2000);
-}
-
-function stopServer(){
-    let s = document.getElementById("status");
-    s.innerText="● Stopping...";
-
-    setTimeout(()=>{
-        s.innerText="● Offline";
-        s.style.color="red";
-    },2000);
-}
-
-function restartServer(){
-    let s = document.getElementById("status");
-    s.innerText="● Restarting...";
-
-    setTimeout(()=>{
-        s.innerText="● Online";
-        s.style.color="lime";
-    },3000);
-}
-</script>
-
-</body>
-</html>
+        <!-- MAIN CONTENT -->
+        <div class="flex-1 flex flex-col min-w-0">
+            
+            <!-- DASHBOARD TAB -->
+            <div id="tab-0" class="tab-content flex-1">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Stats row -->
+                    <div class="lg:col-span-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="glass rounded-3xl p-6 border border-white/10 neon-glow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-white/60 text-sm">Uptime</p>
+                                    <h2 id="uptime" class="text-4xl font-semibold tabular-nums">00h 00m 00s</h2>
+                                </div>
+                                <i class="fa-solid fa-clock text-4xl text-[#00f7ff]"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="glass rounded-3xl p-6 border border-white/10 neon-glow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-white/60 text-sm">TPS</p>
+                                    <h2 id="tps" class="text-4xl font-semibold text-emerald-400">20.0</h2>
+                                </div>
+                                <i class="fa-solid fa-gauge-high text-4xl text-emerald-400"></i>
+                            </div>
+                            <div class="h-2 bg-white/10 rounded-3xl mt-6 overflow-hidden">
+                                <div id="tps-bar" class="h-full w-[92%] bg-gradient-to-r from-emerald-400 to-cyan-400"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass rounded-3xl p-6 border border-white/10 neon-glow">
+                            <p class="text-white/60 text-sm mb-1">CPU Usage</p>
+                            <div class="flex items-baseline gap-x-3">
+                                <h2 id="cpu-value" class="text-4xl font-semibold">34%</h2>
+                                <div class="flex-1 h-3 bg-white/10 rounded-3xl relative overflow-hidden">
+                                    <div id="cpu-bar" class="absolute left-0 top-0 h-full bg-gradient-to-r from-cyan-400 to-purple-400 w-1/3"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass rounded-3xl p-6 border border-white/10 neon-glow">
+                            <div class="flex justify-between mb-4">
+                                <p class="text-white/60 text-sm">RAM • <span id="ram-text" class="font-medium">4.2 / 8 GB</span></p>
+                                <span onclick="openRAMModal()" class="text-xs px-3 py-px bg-white/10 rounded-2xl cursor-pointer hover:bg-white/20">ALLOCATE</span>
+                            </div>
+                            <div class="h-3 bg-white/10 rounded-3xl overflow-hidden">
+                                <div id="ram-bar" class="h-full bg-gradient-to-r from-[#00f7ff] to-[#c026d3] w-[52.5%]"></div>
+                            </div>
+                            <input type="range" id="ram-slider" min="512" max="16384" value="4096" step="512" 
+                                   oninput="updateRAM(this.value)" class="w-full accent-[#00f7ff] mt-4">
+                        </div>
+                    </div>
+                    
+                    <!-- World preview + quick actions -->
+                    <div class="lg:col-span-7 glass rounded-3xl p-8 flex flex-col">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-semibold">World Overview</h3>
+                            <div class="text-emerald-400 text-sm flex items-center"><i class="fa-solid fa-seedling mr-2"></i> Seed: 987654321</div>
+                        </div>
+                        <div class="flex-1 bg-[#0a1428] rounded-3xl flex items-center justify-center relative overflow-hidden border border-white/10">
+                            <div class="text-center">
+                                <i class="fa-solid fa-cube text-[120px] text-white/10"></i>
+                                <p class="text-white/30 mt-4 text-sm">minecraft:overworld • 12,459 blocks loaded</p>
+                            </div>
+                            <div class="absolute bottom-8 left-8 right-8 flex gap-4">
+                                <button onclick="fakeAction('Backup created!')" class="flex-1 py-4 bg-white/10 hover:bg-white/20 rounded-3xl text-sm font-medium">BACKUP WORLD</button>
+                                <button onclick="fakeAction('World regenerated')" class="flex-1 py-4 bg-gradient-to-r from-purple-500 to-cyan-400 rounded-3xl text-sm font-medium">REGENERATE</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent activity -->
+                    <div class="lg:col-span-5 glass rounded-3xl p-8">
+                        <h3 class="font-semibold mb-4">Recent Activity</h3>
+                        <div id="activity-list" class="space-y-4 text-sm">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CONSOLE TAB -->
+            <div id="tab-1" class="tab-content flex-1 hidden flex-col">
+                <div class="glass flex-1 rounded-3xl p-6 flex flex-col border border-white/10">
+                    <div class="flex justify-between mb-4 px-2">
+                        <h3 class="text-lg font-semibold flex items-center"><i class="fa-solid fa-terminal mr-3"></i>Live Console</h3>
+                        <button onclick="clearConsole()" class="text-xs flex items-center gap-x-2 hover:text-red-400">
+                            <i class="fa-solid fa-trash"></i> CLEAR
+                        </button>
+                    </div>
+                    
+                    <div id="console-output" class="flex-1 bg-[#0a1428] font-mono text-sm p-5 rounded-3xl overflow-y-auto text-white/90 border border-white/10 mb-4 leading-relaxed">
+                        <div class="console-line text-emerald-400">[20:14:22] Server started in 3.2s</div>
+                        <div class="console-line text-amber-400">[20:14:23] Done (2.814s)! For help, type &quot;help&quot;</div>
+                        <div id="console-logs"></div>
+                    </div>
+                    
+                    <div class="flex gap-x-3 px-2">
+                        <input id="command-input" 
+                               onkeydown="if(event.keyCode===13) sendCommand()"
+                               type="text" 
+                               placeholder="Type command here... (e.g. /give @p diamond)"
+                               class="flex-1 glass border border-white/20 focus:border-[#00f7ff] rounded-3xl px-6 py-4 outline-none text-sm">
+                        <button onclick="sendCommand()" 
+                                class="px-8 bg-gradient-to-r from-[#00f7ff] to-[#c026d3] text-[#0a1428] font-semibold rounded-3xl hover:scale-105">
+                            SEND
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FILE MANAGER TAB -->
+            <div id="tab-2" class="tab-content hidden">
+                <div class="glass rounded-3xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold">Files • world/</h3>
+                        <div class="flex gap-x-4">
+                            <button onclick="uploadFake()" class="flex items-center gap-x-3 px-6 py-3 rounded-3xl border border-dashed border-white/40 hover:border-white/70">
+                                <i class="fa-solid fa-cloud-upload"></i>
+                                <span>Upload file</span>
+                            </button>
+                            <button onclick="refreshFiles()" class="flex items-center gap-x-2 px-6 py-3 rounded-3xl bg-white/10">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                                REFRESH
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="file-list" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SETTINGS TAB -->
+            <div id="tab-3" class="tab-content hidden flex-1">
+                <div class="max-w-2xl mx-auto glass rounded-3xl p-8">
+                    <h2 class="text-2xl font-semibold mb-8">Server Settings</h
