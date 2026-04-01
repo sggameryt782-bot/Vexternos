@@ -3,185 +3,221 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MC Panel OP+</title>
+<title>MC Panel X</title>
 
 <style>
-body { margin:0; font-family:Arial; background:#0f172a; color:#fff; }
+body {
+    margin:0;
+    font-family:Arial;
+    background:#05070f;
+    color:#fff;
+}
+
+/* LAYOUT */
 .container { display:flex; height:100vh; }
 
 .sidebar {
-    width:260px;
-    background:#020617;
-    padding:20px;
+    width:240px;
+    background:#02040a;
+    padding:15px;
+    border-right:1px solid #0f172a;
 }
-.sidebar h2 { color:#38bdf8; }
+
+.sidebar h2 {
+    color:#00f0ff;
+    text-shadow:0 0 10px #00f0ff;
+}
+
 .sidebar button {
     width:100%;
-    margin:6px 0;
     padding:10px;
-    background:#1e293b;
+    margin:5px 0;
+    background:#0f172a;
     border:none;
-    color:white;
+    color:#ccc;
+    cursor:pointer;
+    border-radius:8px;
+    transition:.2s;
+}
+
+.sidebar button:hover,
+.sidebar button.active {
+    background:#00f0ff;
+    color:#000;
+    box-shadow:0 0 15px #00f0ff;
+}
+
+/* MAIN */
+.main { flex:1; display:flex; flex-direction:column; }
+
+/* TOPBAR */
+.topbar {
+    padding:15px;
+    background:#02040a;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #0f172a;
+}
+
+.topbar h1 { margin:0; }
+
+.btn {
+    padding:8px 15px;
+    border:none;
+    border-radius:6px;
     cursor:pointer;
 }
-.sidebar button.active { background:#38bdf8; }
 
-.main { flex:1; padding:20px; overflow:auto; }
+.start { background:#00ff88; }
+.stop { background:#ff3b3b; }
+.restart { background:#ffaa00; }
+
+/* CONTENT */
+.content { padding:20px; overflow:auto; }
 
 .card {
-    background:#1e293b;
-    padding:20px;
+    background:#0f172a;
+    padding:15px;
     border-radius:10px;
-    margin-bottom:20px;
+    margin-bottom:15px;
+    box-shadow:0 0 10px #00f0ff22;
 }
 
-.hidden { display:none; }
-
+/* CONSOLE */
 .console {
-    background:black;
-    height:200px;
+    background:#000;
+    height:300px;
     overflow:auto;
     padding:10px;
     font-family:monospace;
 }
 
-input, select {
-    padding:8px;
-    margin:5px 0;
+/* GRID */
+.grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:10px;
 }
 
-button.action {
-    padding:8px;
-    margin:5px;
-    background:#38bdf8;
-    border:none;
-    cursor:pointer;
+.stat {
+    padding:15px;
+    background:#02040a;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 0 10px #00f0ff33;
 }
 
-#auth { display:flex; justify-content:center; align-items:center; height:100vh; }
-.auth-box { background:#1e293b; padding:30px; border-radius:10px; }
+.hidden { display:none; }
 </style>
 </head>
 
 <body>
 
-<!-- AUTH (UNCHANGED) -->
-<div id="auth">
-    <div class="auth-box">
-        <h2>Register / Login</h2>
-        <input id="username" placeholder="Username">
-        <input id="password" type="password" placeholder="Password">
-        <button onclick="register()">Register</button>
-        <button onclick="login()">Login</button>
-    </div>
-</div>
-
-<!-- PANEL -->
-<div id="panel" class="hidden">
 <div class="container">
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <h2>MC OP+</h2>
-    <button onclick="openTab('dashboard', this)">Dashboard</button>
-    <button onclick="openTab('consoleTab', this)">Console</button>
-    <button onclick="openTab('files', this)">Files</button>
-    <button onclick="openTab('plugins', this)">Plugins</button>
-    <button onclick="openTab('backups', this)">Backups</button>
-    <button onclick="openTab('scheduler', this)">Scheduler</button>
-    <button onclick="openTab('database', this)">Database</button>
-    <button onclick="openTab('network', this)">Network</button>
-    <button onclick="openTab('analytics', this)">Analytics</button>
-    <button onclick="logout()">Logout</button>
+    <h2>MC X</h2>
+    <button onclick="tab('console',this)" class="active">Console</button>
+    <button onclick="tab('files',this)">Files</button>
+    <button onclick="tab('software',this)">Software</button>
+    <button onclick="tab('backups',this)">Backups</button>
+    <button onclick="tab('network',this)">Network</button>
+    <button onclick="tab('startup',this)">Startup</button>
+    <button onclick="tab('settings',this)">Settings</button>
+    <button onclick="tab('analytics',this)">Analytics</button>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="tab">
-<div class="card">
-<h3>Status: <span id="status">OFFLINE</span></h3>
-<button class="action" onclick="startServer()">Start</button>
-<button class="action" onclick="stopServer()">Stop</button>
-<button class="action" onclick="restartServer()">Restart</button>
-</div>
+<!-- TOPBAR -->
+<div class="topbar">
+    <h1>Server Panel</h1>
+    <div>
+        <button class="btn start" onclick="start()">Start</button>
+        <button class="btn restart" onclick="restart()">Restart</button>
+        <button class="btn stop" onclick="stop()">Stop</button>
+    </div>
 </div>
 
+<!-- CONTENT -->
+<div class="content">
+
 <!-- CONSOLE -->
-<div id="consoleTab" class="tab hidden">
+<div id="console" class="page">
 <div class="card">
-<h3>Console</h3>
-<div class="console" id="console"></div>
-<input id="cmd">
-<button onclick="sendCommand()">Send</button>
+<div class="console" id="log"></div>
+<input id="cmd" placeholder="Type command">
+<button onclick="send()">Send</button>
+</div>
+
+<div class="grid">
+<div class="stat">Status: <span id="status">Offline</span></div>
+<div class="stat">CPU: <span id="cpu">0%</span></div>
+<div class="stat">RAM: <span id="ram">0GB</span></div>
 </div>
 </div>
 
 <!-- FILES -->
-<div id="files" class="tab hidden">
+<div id="files" class="page hidden">
 <div class="card">
-<h3>File Manager</h3>
+<h3>Files</h3>
 <ul id="fileList"></ul>
 <button onclick="addFile()">Add File</button>
 </div>
 </div>
 
-<!-- PLUGINS -->
-<div id="plugins" class="tab hidden">
+<!-- SOFTWARE -->
+<div id="software" class="page hidden">
 <div class="card">
-<h3>Plugins</h3>
-<input id="pluginName" placeholder="Plugin name">
-<button onclick="installPlugin()">Install</button>
-<ul id="pluginsList"></ul>
+<h3>Software</h3>
+<select onchange="setSoft(this.value)">
+<option>Paper</option>
+<option>Spigot</option>
+<option>Forge</option>
+</select>
 </div>
 </div>
 
 <!-- BACKUPS -->
-<div id="backups" class="tab hidden">
+<div id="backups" class="page hidden">
 <div class="card">
-<h3>Backups</h3>
-<button onclick="createBackup()">Create Backup</button>
-<ul id="backupList"></ul>
-</div>
-</div>
-
-<!-- SCHEDULER -->
-<div id="scheduler" class="tab hidden">
-<div class="card">
-<h3>Scheduler</h3>
-<input id="task" placeholder="Command">
-<button onclick="addTask()">Add Task</button>
-<ul id="taskList"></ul>
-</div>
-</div>
-
-<!-- DATABASE -->
-<div id="database" class="tab hidden">
-<div class="card">
-<h3>Database</h3>
-<button onclick="connectDB()">Connect</button>
-<p id="dbStatus">Disconnected</p>
+<button onclick="backup()">Create Backup</button>
+<ul id="backupsList"></ul>
 </div>
 </div>
 
 <!-- NETWORK -->
-<div id="network" class="tab hidden">
+<div id="network" class="page hidden">
 <div class="card">
-<h3>Network</h3>
-<p>IP: 127.0.0.1</p>
-<p>Port: 25565</p>
-<button onclick="changeIP()">Change IP</button>
+<p>IP: 127.0.0.1:25565</p>
+<button onclick="changeIP()">Change</button>
+</div>
+</div>
+
+<!-- STARTUP -->
+<div id="startup" class="page hidden">
+<div class="card">
+<input placeholder="Startup Command">
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="page hidden">
+<div class="card">
+<label>RAM</label>
+<input type="range" min="1" max="16" onchange="setRam(this.value)">
 </div>
 </div>
 
 <!-- ANALYTICS -->
-<div id="analytics" class="tab hidden">
-<div class="card">
-<h3>Analytics</h3>
-<p>CPU: <span id="cpu">10%</span></p>
-<p>RAM: <span id="ram">2GB</span></p>
-<button onclick="updateStats()">Refresh</button>
+<div id="analytics" class="page hidden">
+<div class="grid">
+<div class="stat">Players: 12/50</div>
+<div class="stat">TPS: 20</div>
+<div class="stat">Ping: 30ms</div>
 </div>
 </div>
 
@@ -190,80 +226,54 @@ button.action {
 </div>
 
 <script>
-// AUTH
-function register(){ localStorage.setItem(username.value,password.value); alert("Registered"); }
-function login(){
-    if(localStorage.getItem(username.value)===password.value){
-        auth.style.display="none";
-        panel.classList.remove("hidden");
-    } else alert("Wrong");
-}
-function logout(){ location.reload(); }
+// TAB
+function tab(id,btn){
+    document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
 
-// TAB SYSTEM
-function openTab(id,btn){
-    document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
-    document.getElementById(id).classList.remove("hidden");
-
-    document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
+    document.querySelectorAll('.sidebar button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
 }
 
 // SERVER
-function startServer(){ status.innerText="ONLINE"; log("Started"); }
-function stopServer(){ status.innerText="OFFLINE"; log("Stopped"); }
-function restartServer(){ log("Restarting..."); setTimeout(()=>log("Restarted"),1000); }
+function start(){ status.innerText="Online"; log("Server started"); }
+function stop(){ status.innerText="Offline"; log("Server stopped"); }
+function restart(){ log("Restarting..."); setTimeout(()=>log("Restarted"),1000); }
 
 // CONSOLE
-function log(msg){
-    console.innerHTML+=msg+"<br>";
-    console.scrollTop=console.scrollHeight;
-}
-function sendCommand(){ log("> "+cmd.value); }
+function log(t){ logDiv.innerHTML+=t+"<br>"; logDiv.scrollTop=9999; }
+const logDiv = document.getElementById("log");
+
+function send(){ log("> "+cmd.value); }
 
 // FILES
 function addFile(){
     let li=document.createElement("li");
-    li.innerText="new_file.txt";
+    li.innerText="file_"+Date.now();
     fileList.appendChild(li);
 }
 
-// PLUGINS
-function installPlugin(){
-    let li=document.createElement("li");
-    li.innerText=pluginName.value;
-    pluginsList.appendChild(li);
-}
+// SOFTWARE
+function setSoft(v){ log("Software set to "+v); }
 
-// BACKUPS
-function createBackup(){
+// BACKUP
+function backup(){
     let li=document.createElement("li");
     li.innerText="Backup "+Date.now();
-    backupList.appendChild(li);
-}
-
-// SCHEDULER
-function addTask(){
-    let li=document.createElement("li");
-    li.innerText=task.value;
-    taskList.appendChild(li);
-}
-
-// DATABASE
-function connectDB(){
-    dbStatus.innerText="Connected";
+    backupsList.appendChild(li);
 }
 
 // NETWORK
-function changeIP(){
-    alert("IP Changed (mock)");
-}
+function changeIP(){ alert("Changed"); }
 
-// ANALYTICS
-function updateStats(){
+// SETTINGS
+function setRam(v){ ram.innerText=v+"GB"; }
+
+// STATS LOOP
+setInterval(()=>{
     cpu.innerText=Math.floor(Math.random()*100)+"%";
     ram.innerText=Math.floor(Math.random()*16)+"GB";
-}
+},2000);
 </script>
 
 </body>
