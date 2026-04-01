@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cryonix Nexus | Ultimate Control Panel</title>
+    <title>Cryonix Nexus | Pro Edition</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -14,57 +14,44 @@
             --primary: #00d2ff; /* Cyber Blue */
             --secondary: #00ff7f; /* Neon Green */
             --bg-dark: #02080e;
-            --panel-bg: rgba(10, 25, 41, 0.75);
+            --panel-bg: rgba(10, 25, 41, 0.8);
             --border: rgba(0, 210, 255, 0.2);
             --text: #e2e8f0;
             --text-dim: #94a3b8;
-            --sidebar-width: 280px;
+            --sidebar-width: 260px;
             --sidebar-collapsed: 80px;
-            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         body { background: var(--bg-dark); color: var(--text); overflow: hidden; height: 100vh; }
 
-        /* Animated Background */
-        .glow-bg {
-            position: fixed; inset: 0; z-index: -1;
-            background: radial-gradient(circle at 10% 10%, rgba(0, 210, 255, 0.08) 0%, transparent 45%),
-                        radial-gradient(circle at 90% 90%, rgba(0, 255, 127, 0.08) 0%, transparent 45%);
-        }
-
-        /* --- AUTHENTICATION --- */
+        /* --- AUTHENTICATION LAYER (The Fix is Here) --- */
         #auth-overlay {
             position: fixed; inset: 0; z-index: 10000; background: var(--bg-dark);
             display: flex; align-items: center; justify-content: center; transition: 0.6s ease;
         }
 
         .auth-card {
-            background: var(--panel-bg); border: 1px solid var(--border); width: 440px;
-            padding: 40px; border-radius: 28px; backdrop-filter: blur(25px); text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.7); position: relative;
+            background: var(--panel-bg); border: 1px solid var(--border); width: 420px;
+            padding: 40px; border-radius: 24px; backdrop-filter: blur(20px); text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
 
-        .auth-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            border-radius: 28px 28px 0 0;
-        }
-
-        .auth-title { font-size: 2.8rem; font-weight: 800; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; letter-spacing: 2px; }
+        .auth-title { font-size: 2.5rem; font-weight: 800; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; }
         
-        .input-group { margin-bottom: 18px; text-align: left; }
-        .input-group label { display: block; font-size: 0.75rem; color: var(--primary); margin-bottom: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-        .input-group input { width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 14px; color: white; outline: none; transition: 0.3s; }
-        .input-group input:focus { border-color: var(--secondary); box-shadow: 0 0 15px rgba(0, 255, 127, 0.15); }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; font-size: 0.75rem; color: var(--primary); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
+        .input-group input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; }
+        .input-group input:focus { border-color: var(--secondary); }
 
-        .btn-auth { width: 100%; padding: 16px; background: linear-gradient(to right, var(--primary), var(--secondary)); border: none; border-radius: 14px; font-weight: 800; cursor: pointer; color: #000; text-transform: uppercase; transition: 0.3s; margin-top: 10px; }
-        .btn-auth:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 210, 255, 0.3); filter: brightness(1.1); }
+        .btn-auth { width: 100%; padding: 15px; background: linear-gradient(to right, var(--primary), var(--secondary)); border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: #000; text-transform: uppercase; margin-top: 10px; }
 
         .auth-toggle-link { margin-top: 25px; font-size: 0.9rem; color: var(--text-dim); }
-        .auth-toggle-link span { color: var(--secondary); cursor: pointer; font-weight: 700; text-decoration: underline; }
+        /* Guaranteed Clickable Style */
+        .auth-toggle-link a { color: var(--secondary); cursor: pointer; font-weight: 700; text-decoration: underline; display: inline-block; padding: 5px; }
 
-        /* --- DASHBOARD GRID --- */
+        /* --- DASHBOARD STRUCTURE --- */
         #app-wrapper {
             display: grid; grid-template-columns: var(--sidebar-width) 1fr;
             height: 100vh; transition: var(--transition); opacity: 0; visibility: hidden;
@@ -72,89 +59,63 @@
         #app-wrapper.active { opacity: 1; visibility: visible; }
         #app-wrapper.collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; }
 
-        /* Sidebar Styling */
+        /* Sidebar */
         .sidebar {
-            background: rgba(4, 12, 22, 0.98); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 100;
+            background: rgba(5, 15, 25, 0.95); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow: hidden; position: relative;
         }
 
-        .sidebar-header { padding: 35px 20px; display: flex; align-items: center; gap: 15px; }
-        .logo-icon { min-width: 45px; height: 45px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: black; font-size: 1.6rem; box-shadow: 0 0 20px rgba(0, 210, 255, 0.3); }
-        .logo-text { font-weight: 800; font-size: 1.5rem; color: white; white-space: nowrap; transition: 0.3s; letter-spacing: 1px; }
-        
+        .sidebar-header { padding: 30px 20px; display: flex; align-items: center; gap: 15px; }
+        .logo-icon { min-width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 1.4rem; }
+        .logo-text { font-weight: 800; font-size: 1.4rem; color: white; white-space: nowrap; transition: 0.3s; }
         #app-wrapper.collapsed .logo-text { opacity: 0; }
 
-        .nav-list { flex: 1; padding: 15px; list-style: none; }
         .nav-item {
-            display: flex; align-items: center; gap: 18px; padding: 15px 18px;
-            border-radius: 15px; cursor: pointer; color: var(--text-dim);
-            transition: 0.3s; margin-bottom: 8px; white-space: nowrap;
+            display: flex; align-items: center; gap: 15px; padding: 15px 20px;
+            margin: 4px 10px; border-radius: 12px; cursor: pointer; color: var(--text-dim); transition: 0.2s;
         }
-        .nav-item i { font-size: 1.3rem; min-width: 25px; text-align: center; }
+        .nav-item i { width: 25px; text-align: center; font-size: 1.2rem; }
         .nav-item:hover, .nav-item.active { background: rgba(0, 210, 255, 0.1); color: var(--primary); }
-        .nav-item.active { box-shadow: inset 5px 0 0 var(--secondary); color: var(--primary); font-weight: 700; }
+        .nav-item.active { border-left: 4px solid var(--secondary); color: white; }
 
-        .sidebar-toggle {
-            position: absolute; bottom: 30px; right: 20px;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            width: 40px; height: 40px; border-radius: 10px; cursor: pointer; color: white; transition: 0.3s;
-        }
-        .sidebar-toggle:hover { background: var(--primary); color: black; }
+        .toggle-btn { position: absolute; bottom: 20px; right: 20px; background: var(--border); border: none; width: 35px; height: 35px; border-radius: 8px; color: white; cursor: pointer; }
 
-        /* Content Area */
-        .main-container { display: flex; flex-direction: column; background: radial-gradient(circle at center, rgba(0, 210, 255, 0.02), transparent); }
+        /* Main UI */
+        .main-container { display: flex; flex-direction: column; background: radial-gradient(circle at top right, rgba(0, 255, 127, 0.03), transparent); }
 
-        .top-bar {
-            padding: 25px 45px; background: rgba(8, 20, 35, 0.8); backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
-        }
+        .top-bar { padding: 20px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(8, 20, 35, 0.5); }
+        
+        .server-status { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #444; }
+        .status-dot.online { background: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
 
-        .server-status { display: flex; align-items: center; gap: 15px; }
-        .status-pill { padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; background: #222; color: #888; display: flex; align-items: center; gap: 8px; }
-        .status-pill.online { background: rgba(0, 255, 127, 0.15); color: var(--secondary); border: 1px solid var(--secondary); }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
-
-        .power-controls { display: flex; gap: 12px; }
-        .btn-pwr {
-            padding: 12px 24px; border-radius: 12px; border: 1px solid transparent;
-            font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 0.85rem; font-family: 'Outfit';
-        }
+        .btn-pwr { padding: 10px 20px; border-radius: 8px; border: 1px solid transparent; font-weight: 800; cursor: pointer; transition: 0.2s; }
         .btn-start { background: rgba(0, 255, 127, 0.1); color: var(--secondary); border-color: var(--secondary); }
         .btn-stop { background: rgba(255, 51, 102, 0.1); color: #ff3366; border-color: #ff3366; }
-        .btn-start:hover { background: var(--secondary); color: black; box-shadow: 0 0 20px rgba(0, 255, 127, 0.4); }
 
-        /* Pages */
-        .page-content { flex: 1; padding: 45px; overflow-y: auto; }
-        .page { display: none; animation: slideUp 0.5s ease-out forwards; }
+        .page { display: none; padding: 40px; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Components */
-        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 30px; }
-        .stat-card { background: var(--panel-bg); border: 1px solid var(--border); padding: 30px; border-radius: 24px; position: relative; overflow: hidden; }
-        .stat-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--primary); opacity: 0.3; }
-        .stat-label { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; margin-bottom: 10px; display: block; }
-        .stat-value { font-size: 2rem; font-weight: 800; color: white; }
+        /* Widgets */
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .card { background: var(--panel-bg); border: 1px solid var(--border); padding: 25px; border-radius: 20px; }
+        
+        .terminal { background: #01050a; border-radius: 15px; height: 450px; display: flex; flex-direction: column; border: 1px solid #1a2332; }
+        .term-logs { flex: 1; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; overflow-y: auto; color: #a1b0c0; }
+        .term-input { padding: 15px; border-top: 1px solid #1a2332; display: flex; gap: 10px; }
+        .term-input input { background: transparent; border: none; color: white; flex: 1; outline: none; }
 
-        .terminal { background: #01050a; border-radius: 20px; border: 1px solid #1a2332; height: 500px; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
-        .term-body { flex: 1; padding: 25px; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; overflow-y: auto; color: #a1b0c0; line-height: 1.7; }
-        .term-input-row { background: #080d14; padding: 18px 25px; border-top: 1px solid #1a2332; display: flex; gap: 15px; align-items: center; }
-        .term-input-row input { background: transparent; border: none; color: white; flex: 1; outline: none; font-family: 'JetBrains Mono'; font-size: 1rem; }
+        .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 11000; }
+        .toast { background: var(--panel-bg); border-left: 4px solid var(--secondary); padding: 15px 25px; border-radius: 8px; margin-top: 10px; animation: slideIn 0.3s forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* Toast Notifications */
-        .toast-box { position: fixed; bottom: 35px; right: 35px; z-index: 11000; }
-        .toast { background: rgba(5, 15, 25, 0.9); border-left: 5px solid var(--secondary); padding: 18px 28px; border-radius: 12px; margin-top: 12px; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes toastIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
-
-        /* Custom UI Helpers */
-        .row-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 10px; border: 1px solid transparent; transition: 0.3s; }
-        .row-item:hover { border-color: var(--primary); background: rgba(0, 210, 255, 0.05); }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div class="glow-bg"></div>
-    <div class="toast-box" id="toaster"></div>
+    <div class="toast-container" id="toasts"></div>
 
     <div id="auth-overlay">
         <div class="auth-card">
@@ -163,162 +124,202 @@
             <div id="ui-login">
                 <div class="input-group">
                     <label>Email Address</label>
-                    <input type="email" placeholder="admin@cryonixhs.xyz" id="log-email">
+                    <input type="email" placeholder="admin@cryonix.xyz" id="l-email">
                 </div>
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" placeholder="••••••••" id="log-pass">
+                    <input type="password" placeholder="••••••••" id="l-pass">
                 </div>
-                <button class="btn-auth" onclick="unlockPanel()">Initialize Session</button>
-                <div class="auth-toggle-link">No access? <span onclick="switchAuth('reg')">Create Account</span></div>
+                <button class="btn-auth" onclick="enterApp()">Login to Nexus</button>
+                <div class="auth-toggle-link">
+                    Need a node? <a onclick="forceShowRegister()">Create Account</a>
+                </div>
             </div>
 
             <div id="ui-register" style="display: none;">
                 <div class="input-group">
-                    <label>Full Name</label>
+                    <label>Operator Name</label>
                     <input type="text" placeholder="John Doe">
                 </div>
                 <div class="input-group">
                     <label>Email Address</label>
-                    <input type="email" placeholder="user@domain.com">
+                    <input type="email" placeholder="user@cryonix.xyz">
                 </div>
                 <div class="input-group">
-                    <label>Master Password</label>
+                    <label>New Password</label>
                     <input type="password" placeholder="••••••••">
                 </div>
                 <div class="input-group">
                     <label>Confirm Password</label>
                     <input type="password" placeholder="••••••••">
                 </div>
-                <button class="btn-auth" onclick="unlockPanel()">Deploy Account</button>
-                <div class="auth-toggle-link">Already a member? <span onclick="switchAuth('log')">Login Instead</span></div>
+                <button class="btn-auth" onclick="enterApp()">Deploy Account</button>
+                <div class="auth-toggle-link">
+                    Already synced? <a onclick="forceShowLogin()">Login Instead</a>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="app-wrapper">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="logo-icon"><i class="fas fa-cube"></i></div>
+                <div class="logo-icon"><i class="fas fa-microchip"></i></div>
                 <div class="logo-text">CRYONIX</div>
             </div>
 
-            <ul class="nav-list">
-                <li class="nav-item active" onclick="navigate('console', this)"><i class="fas fa-terminal"></i> <span>Console</span></li>
-                <li class="nav-item" onclick="navigate('files', this)"><i class="fas fa-folder-tree"></i> <span>File Manager</span></li>
-                <li class="nav-item" onclick="navigate('plugins', this)"><i class="fas fa-puzzle-piece"></i> <span>Plugins</span></li>
-                <li class="nav-item" onclick="navigate('backups', this)"><i class="fas fa-shield-halved"></i> <span>Backups</span></li>
-                <li class="nav-item" onclick="navigate('network', this)"><i class="fas fa-globe"></i> <span>Network</span></li>
-                <li class="nav-item" onclick="navigate('startup', this)"><i class="fas fa-bolt"></i> <span>Startup</span></li>
-                <li class="nav-item" onclick="navigate('analytics', this)"><i class="fas fa-chart-line"></i> <span>Analytics</span></li>
-                <li class="nav-item" onclick="navigate('settings', this)"><i class="fas fa-cog"></i> <span>Settings</span></li>
-            </ul>
+            <nav>
+                <div class="nav-item active" onclick="nav('console', this)"><i class="fas fa-terminal"></i> <span>Console</span></div>
+                <div class="nav-item" onclick="nav('files', this)"><i class="fas fa-folder"></i> <span>Files</span></div>
+                <div class="nav-item" onclick="nav('plugins', this)"><i class="fas fa-plug"></i> <span>Plugins</span></div>
+                <div class="nav-item" onclick="nav('backups', this)"><i class="fas fa-database"></i> <span>Backups</span></div>
+                <div class="nav-item" onclick="nav('network', this)"><i class="fas fa-network-wired"></i> <span>Network</span></div>
+                <div class="nav-item" onclick="nav('startup', this)"><i class="fas fa-rocket"></i> <span>Startup</span></div>
+                <div class="nav-item" onclick="nav('analytics', this)"><i class="fas fa-chart-line"></i> <span>Analytics</span></div>
+                <div class="nav-item" onclick="nav('settings', this)"><i class="fas fa-cog"></i> <span>Settings</span></div>
+            </nav>
 
-            <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-angle-double-left" id="t-icon"></i></button>
+            <button class="toggle-btn" onclick="toggleSide()"><i class="fas fa-chevron-left" id="side-icon"></i></button>
         </aside>
 
         <main class="main-container">
             <header class="top-bar">
                 <div class="server-status">
-                    <div class="status-pill" id="status-pill"><div class="dot"></div> <span id="status-txt">OFFLINE</span></div>
-                    <span style="color: var(--primary); font-family: 'JetBrains Mono'; font-weight: 700; margin-left: 20px;">IP: cryonixmc.qd.je</span>
+                    <div class="status-dot" id="dot"></div>
+                    <span id="st-txt">OFFLINE</span>
+                    <span style="margin-left: 20px; color: var(--primary); font-family: 'JetBrains Mono';" id="ip">IP: cryonixmc.qd.je</span>
                 </div>
                 <div class="power-controls">
-                    <button class="btn-pwr btn-start" onclick="power('START')"><i class="fas fa-play"></i> START</button>
-                    <button class="btn-pwr btn-stop" onclick="power('STOP')"><i class="fas fa-stop"></i> STOP</button>
+                    <button class="btn-pwr btn-start" onclick="srvAction('START')">START</button>
+                    <button class="btn-pwr btn-stop" onclick="srvAction('STOP')">STOP</button>
                 </div>
             </header>
 
             <div class="page-content">
-                
                 <div id="page-console" class="page active">
                     <div class="stat-grid">
-                        <div class="stat-card"><span class="stat-label">CPU LOAD</span><div class="stat-value" id="cpu-val">0.0%</div></div>
-                        <div class="stat-card"><span class="stat-label">RAM USED</span><div class="stat-value" id="ram-val">0.0 / 16GB</div></div>
-                        <div class="stat-card"><span class="stat-label">PLAYERS</span><div class="stat-value">0 / 100</div></div>
-                        <div class="stat-card"><span class="stat-label">UPTIME</span><div class="stat-value" id="uptime-val">00h 00m</div></div>
+                        <div class="card"><small>CPU</small><h2 id="cpu">0.0%</h2></div>
+                        <div class="card"><small>RAM</small><h2 id="ram">0 / 16GB</h2></div>
+                        <div class="card"><small>PLAYERS</small><h2>0 / 100</h2></div>
+                        <div class="card"><small>TPS</small><h2>20.0</h2></div>
                     </div>
                     <div class="terminal">
-                        <div class="term-body" id="console-logs">
-                            [SYSTEM] Node connection established.<br>
-                            [SYSTEM] Awaiting power signal...<br>
+                        <div class="term-logs" id="logs">
+                            [System] Ready to start instance...<br>
                         </div>
-                        <div class="term-input-row">
-                            <span style="color: var(--secondary); font-weight: 800;">$</span>
-                            <input type="text" placeholder="Send command to server..." id="console-in" onkeypress="runCommand(event)">
+                        <div class="term-input">
+                            <span style="color:var(--secondary)">$</span>
+                            <input type="text" placeholder="Type command..." id="cmd-in" onkeypress="handleCmd(event)">
                         </div>
                     </div>
                 </div>
 
-                <div id="page-files" class="page">
-                    <div class="stat-card" style="width: 100%;">
-                        <h3 style="margin-bottom: 20px;">File Manager - /home/container</h3>
-                        <div class="row-item"><span><i class="fas fa-folder" style="color: #ffb800; margin-right: 15px;"></i> world</span> <span>420 MB</span></div>
-                        <div class="row-item"><span><i class="fas fa-folder" style="color: #ffb800; margin-right: 15px;"></i> plugins</span> <span>12 MB</span></div>
-                        <div class="row-item"><span><i class="fas fa-file-lines" style="color: var(--primary); margin-right: 15px;"></i> server.properties</span> <span>4 KB</span></div>
-                        <button class="btn-auth" style="width: 200px; margin-top: 20px;">Upload File</button>
-                    </div>
-                </div>
-
-                <div id="page-settings" class="page">
-                    <div class="stat-card">
-                        <h3 style="margin-bottom: 20px;">Hardware Allocation</h3>
-                        <div class="input-group">
-                            <label>RAM Limit: <span id="r-lbl" style="color: var(--secondary)">8</span> GB</label>
-                            <input type="range" min="1" max="16" value="8" style="width: 100%;" oninput="document.getElementById('r-lbl').innerText = this.value">
-                        </div>
-                        <button class="btn-auth" style="width: 200px;" onclick="notify('SUCCESS', 'Hardware updated.')">Save Changes</button>
-                    </div>
-                </div>
-
-                <div id="page-plugins" class="page"><div class="stat-card"><h3>Plugin Installer</h3><p style="margin: 20px 0;">Automatic 1-click install for Spigot/Paper.</p><input type="text" class="btn-auth" style="background: rgba(0,0,0,0.5); color: white; text-align: left;" placeholder="Search plugins..."></div></div>
-                <div id="page-backups" class="page"><div class="stat-card"><h3>Cloud Backups</h3><p style="margin-bottom: 20px;">Protect your data with encrypted snapshots.</p><button class="btn-auth" style="width: 200px;">Create Backup Now</button></div></div>
-                <div id="page-network" class="page"><div class="stat-card"><h3>Network & Ports</h3><p>Main Port: 25565</p><p>IP: cryonixmc.qd.je</p></div></div>
-                <div id="page-startup" class="page"><div class="stat-card"><h3>Startup Flags</h3><div class="input-group"><label>Java Version</label><input type="text" value="Java 17 (LTS)"></div></div></div>
-                <div id="page-analytics" class="page"><div class="stat-card" style="height: 350px;"><h3>Performance Graph</h3><canvas id="myChart"></canvas></div></div>
-
+                <div id="page-files" class="page"><div class="card"><h3>File Manager</h3><hr style="margin:15px 0; border:0; border-top:1px solid var(--border);"><p>Accessing /home/container...</p></div></div>
+                <div id="page-plugins" class="page"><div class="card"><h3>Plugin Installer</h3><p style="margin-top:20px;">Search SpigotMC database...</p></div></div>
+                <div id="page-backups" class="page"><div class="card"><h3>Server Snapshots</h3><button class="btn-auth" style="width:200px; margin-top:20px;">Create Backup</button></div></div>
+                <div id="page-network" class="page"><div class="card"><h3>Allocations</h3><p>Port: 25565 (Primary)</p></div></div>
+                <div id="page-startup" class="page"><div class="card"><h3>Startup Variables</h3><input type="text" value="java -Xmx{{RAM}}G -jar server.jar" class="btn-auth" style="background:rgba(0,0,0,0.5); text-align:left; color:white;"></div></div>
+                <div id="page-analytics" class="page"><div class="card" style="height:300px;"><h3>Live Performance</h3><canvas id="chart"></canvas></div></div>
+                <div id="page-settings" class="page"><div class="card"><h3>Node Settings</h3><p>Allocated RAM: 16GB</p></div></div>
             </div>
         </main>
     </div>
 
     <script>
-        // --- AUTH SWITCHER (FIXED) ---
-        function switchAuth(target) {
-            const loginUI = document.getElementById('ui-login');
-            const registerUI = document.getElementById('ui-register');
-            
-            if(target === 'reg') {
-                loginUI.style.display = 'none';
-                registerUI.style.display = 'block';
-            } else {
-                registerUI.style.display = 'none';
-                loginUI.style.display = 'block';
-            }
+        // --- THE FIX: BULLETPROOF AUTH SWITCH ---
+        function forceShowRegister() {
+            document.getElementById('ui-login').style.setProperty('display', 'none', 'important');
+            document.getElementById('ui-register').style.setProperty('display', 'block', 'important');
         }
 
-        function unlockPanel() {
+        function forceShowLogin() {
+            document.getElementById('ui-register').style.setProperty('display', 'none', 'important');
+            document.getElementById('ui-login').style.setProperty('display', 'block', 'important');
+        }
+
+        function enterApp() {
             const auth = document.getElementById('auth-overlay');
             const app = document.getElementById('app-wrapper');
-            
             auth.style.opacity = '0';
-            auth.style.transform = 'scale(1.1)';
-            
             setTimeout(() => {
                 auth.style.display = 'none';
                 app.classList.add('active');
-                notify("SECURE LINK", "Session established with Cryonix Node.");
-                initCharts();
+                notify("SUCCESS", "Nexus Connection Secure.");
+                initChart();
             }, 600);
         }
 
-        // --- SIDEBAR SLIDING ---
-        function toggleSidebar() {
-            const wrapper = document.getElementById('app-wrapper');
-            const icon = document.getElementById('t-icon');
-            wrapper.classList.toggle('collapsed');
-            icon.className = wrapper.classList.contains('collapsed') ? 'fas fa-angle-double-right' : 'fas fa-angle-double-left';
+        // --- SIDEBAR SLIDE ---
+        function toggleSide() {
+            const app = document.getElementById('app-wrapper');
+            const icon = document.getElementById('side-icon');
+            app.classList.toggle('collapsed');
+            icon.className = app.classList.contains('collapsed') ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
         }
 
-        // --- SPA NAVIGATION ---
-        function navigate(pageId, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')
+        // --- NAVIGATION (SPA) ---
+        function nav(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            el.classList.add('active');
+        }
+
+        // --- POWER LOGIC ---
+        let statInt;
+        function srvAction(type) {
+            const dot = document.getElementById('dot');
+            const txt = document.getElementById('st-txt');
+            const logs = document.getElementById('logs');
+
+            if(type === 'START') {
+                dot.classList.add('online');
+                txt.innerText = 'ONLINE';
+                logs.innerHTML += `<div style="color:var(--secondary)">[INFO] Booting Paper-1.20.1.jar...</div>`;
+                startStats();
+            } else {
+                dot.classList.remove('online');
+                txt.innerText = 'OFFLINE';
+                logs.innerHTML += `<div style="color:#ff3366">[WARN] Shutdown signal received.</div>`;
+                clearInterval(statInt);
+            }
+        }
+
+        function handleCmd(e) {
+            if(e.key === 'Enter') {
+                const i = document.getElementById('cmd-in');
+                document.getElementById('logs').innerHTML += `<div><span style="color:var(--primary)">$</span> ${i.value}</div>`;
+                i.value = '';
+            }
+        }
+
+        function notify(title, msg) {
+            const box = document.getElementById('toasts');
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.innerHTML = `<strong>${title}</strong><br><small>${msg}</small>`;
+            box.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        function startStats() {
+            statInt = setInterval(() => {
+                document.getElementById('cpu').innerText = (Math.random() * 25 + 5).toFixed(1) + '%';
+                document.getElementById('ram').innerText = (Math.random() * 2 + 4).toFixed(1) + ' / 16GB';
+            }, 2000);
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1', '2', '3', '4', '5'],
+                    datasets: [{ label: 'Load', data: [10, 25, 15, 30, 20], borderColor: '#00ff7f', tension: 0.4 }]
+                },
+                options: { maintainAspectRatio: false }
+            });
+        }
+    </script>
+</body>
+</html>
