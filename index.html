@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Server Hosting UI</title>
+    <title>Premium Server Hosting | Responsive</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,200 +11,186 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #0f172a; /* Dark Navy Background */
+            background-color: #020617;
             color: white;
             margin: 0;
-            padding: 0;
-        }
-        /* Mobile App Container Simulation */
-        .app-container {
-            max-width: 450px;
-            margin: 0 auto;
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            min-height: 100vh;
-            position: relative;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            padding-bottom: 80px; /* Space for bottom nav */
             overflow-x: hidden;
         }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform 0.2s, background 0.2s;
         }
-        /* Smooth Page Transitions */
-        .page {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.06);
         }
-        .page.active {
-            display: block;
+        .page { display: none; animation: slideIn 0.3s ease-out; }
+        .page.active { display: block; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        /* Status Dot Animation */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
         }
-        .glow-button {
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s ease;
-        }
-        .glow-button:active {
-            transform: scale(0.95);
+
+        /* Sidebar for PC, Bottom Nav for Mobile */
+        @media (min-width: 1024px) {
+            .main-content { margin-left: 260px; padding: 40px; }
+            .sidebar { display: flex !important; }
+            .mobile-nav { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-
-    <div id="page-home" class="page active">
-        <header class="glass-panel p-5 rounded-b-3xl mb-6 shadow-lg">
-            <div class="flex justify-between items-center mb-2">
-                <span class="text-xs font-semibold text-gray-400 tracking-wider">YOUR SERVER</span>
-                <span class="bg-red-500/20 text-red-500 text-xs font-bold px-3 py-1 rounded-full border border-red-500/50 flex items-center gap-2">
-                    <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div> Offline
-                </span>
+    <aside class="sidebar hidden fixed left-0 top-0 h-screen w-[260px] bg-[#0f172a] border-r border-white/5 flex-col p-6 z-50">
+        <div class="flex items-center gap-3 mb-10 px-2">
+            <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                <i class="fas fa-cube text-white"></i>
             </div>
-            <div class="flex justify-between items-center">
-                <h1 class="text-lg font-bold truncate">MyServer.aternos.me</h1>
-                <button class="text-gray-400 hover:text-white bg-white/5 p-2 rounded-lg transition">
-                    <i class="fas fa-copy"></i>
+            <span class="text-xl font-bold tracking-tight">NovaHost</span>
+        </div>
+
+        <nav class="space-y-2">
+            <button onclick="navigateTo('page-home')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl bg-emerald-500/10 text-emerald-400 font-medium">
+                <i class="fas fa-th-large w-5"></i> Dashboard
+            </button>
+            <button onclick="navigateTo('page-console')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
+                <i class="fas fa-terminal w-5"></i> Console
+            </button>
+            <button onclick="navigateTo('page-features')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
+                <i class="fas fa-puzzle-piece w-5"></i> Plugins
+            </button>
+            <button onclick="navigateTo('page-features')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 transition">
+                <i class="fas fa-file-code w-5"></i> Config Files
+            </button>
+        </nav>
+    </aside>
+
+    <main class="main-content min-h-screen pb-24 lg:pb-10">
+        
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 p-4 lg:p-0">
+            <div>
+                <h1 class="text-2xl font-bold">Server Overview</h1>
+                <p class="text-gray-400 text-sm flex items-center gap-2 mt-1">
+                    <span class="status-dot bg-red-500 animate-pulse"></span> Offline • MyServer.aternos.me
+                </p>
+            </div>
+            <div class="flex gap-3 w-full md:w-auto">
+                <button class="flex-1 md:flex-none bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-emerald-500/20 transition-all active:scale-95">
+                    <i class="fas fa-play mr-2"></i> START
+                </button>
+                <button class="bg-white/5 hover:bg-white/10 p-3 rounded-xl border border-white/10">
+                    <i class="fas fa-redo"></i>
                 </button>
             </div>
         </header>
 
-        <div class="px-5">
-            <div class="flex gap-4 mb-6">
-                <button class="glow-button bg-emerald-500 hover:bg-emerald-600 text-white flex-1 py-4 rounded-2xl font-bold text-lg flex flex-col items-center justify-center gap-1">
-                    <i class="fas fa-play text-xl"></i> START
+        <div id="page-home" class="page active">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 px-4 lg:px-0">
+                <div class="glass-card p-6 rounded-3xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-blue-500/10 rounded-2xl text-blue-400"><i class="fas fa-microchip text-xl"></i></div>
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">CPU Usage</span>
+                    </div>
+                    <h3 class="text-2xl font-bold">0%</h3>
+                    <div class="w-full bg-white/5 h-1.5 rounded-full mt-4"><div class="bg-blue-500 h-full rounded-full" style="width: 2%"></div></div>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-purple-500/10 rounded-2xl text-purple-400"><i class="fas fa-memory text-xl"></i></div>
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Memory</span>
+                    </div>
+                    <h3 class="text-2xl font-bold">0 <span class="text-sm text-gray-500">/ 2048 MB</span></h3>
+                    <div class="w-full bg-white/5 h-1.5 rounded-full mt-4"><div class="bg-purple-500 h-full rounded-full" style="width: 5%"></div></div>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-orange-500/10 rounded-2xl text-orange-400"><i class="fas fa-users text-xl"></i></div>
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Players</span>
+                    </div>
+                    <h3 class="text-2xl font-bold">0 <span class="text-sm text-gray-500">/ 50</span></h3>
+                    <div class="w-full bg-white/5 h-1.5 rounded-full mt-4"><div class="bg-orange-500 h-full rounded-full" style="width: 0%"></div></div>
+                </div>
+            </div>
+
+            <h2 class="text-lg font-bold mb-4 px-4 lg:px-0">Management</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 lg:px-0">
+                <button onclick="navigateTo('page-console')" class="glass-card p-8 rounded-3xl flex flex-col items-center gap-3">
+                    <i class="fas fa-terminal text-3xl text-emerald-400"></i>
+                    <span class="font-medium">Console</span>
                 </button>
-                <div class="flex flex-col gap-3 w-1/3">
-                    <button class="glass-panel py-2 rounded-xl text-sm font-medium hover:bg-white/10 transition flex items-center justify-center gap-2">
-                        <i class="fas fa-redo"></i> Restart
-                    </button>
-                    <button class="glass-panel py-2 rounded-xl text-sm font-medium hover:bg-white/10 transition flex items-center justify-center gap-2 text-red-400">
-                        <i class="fas fa-stop"></i> Stop
-                    </button>
-                </div>
+                <button onclick="navigateTo('page-features')" class="glass-card p-8 rounded-3xl flex flex-col items-center gap-3">
+                    <i class="fas fa-folder-open text-3xl text-blue-400"></i>
+                    <span class="font-medium">Files</span>
+                </button>
+                <button onclick="navigateTo('page-features')" class="glass-card p-8 rounded-3xl flex flex-col items-center gap-3">
+                    <i class="fas fa-database text-3xl text-yellow-400"></i>
+                    <span class="font-medium">Backups</span>
+                </button>
+                <button onclick="navigateTo('page-features')" class="glass-card p-8 rounded-3xl flex flex-col items-center gap-3">
+                    <i class="fas fa-sliders-h text-3xl text-red-400"></i>
+                    <span class="font-medium">Options</span>
+                </button>
             </div>
+        </div>
 
-            <div class="glass-panel rounded-2xl p-4 mb-6">
-                <h2 class="text-sm font-semibold text-gray-400 mb-3"><i class="fas fa-microchip mr-2"></i>Resources</h2>
-                <div class="mb-3">
-                    <div class="flex justify-between text-xs mb-1">
-                        <span>RAM Usage</span> <span>0 MB / 2048 MB</span>
-                    </div>
-                    <div class="w-full bg-gray-700 rounded-full h-1.5"><div class="bg-emerald-400 h-1.5 rounded-full" style="width: 5%"></div></div>
+        <div id="page-console" class="page px-4 lg:px-0">
+            <div class="bg-black/40 border border-white/10 rounded-3xl overflow-hidden">
+                <div class="bg-white/5 p-4 border-b border-white/10 flex justify-between items-center">
+                    <span class="text-sm font-mono text-gray-400">root@novahost:~# console</span>
+                    <button onclick="navigateTo('page-home')" class="lg:hidden text-xs bg-white/10 px-3 py-1 rounded-lg text-white">Back</button>
                 </div>
-                <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <span>Players</span> <span>0 / 20</span>
-                    </div>
+                <div class="p-6 h-[400px] overflow-y-auto font-mono text-sm space-y-2 text-emerald-500/80">
+                    <p>> Loading libraries, please wait...</p>
+                    <p>> [Server] Starting Minecraft server on *:25565</p>
+                    <p class="text-yellow-500">> [Warn] Server is in OFFLINE mode!</p>
+                    <p class="text-white">> Done (3.4s)! For help, type "help"</p>
                 </div>
-            </div>
-
-            <h2 class="text-sm font-semibold text-gray-400 mb-3 ml-1">Management</h2>
-            <div class="grid grid-cols-2 gap-3 mb-6">
-                <div onclick="navigateTo('page-console')" class="glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-white/10 transition">
-                    <i class="fas fa-terminal text-2xl text-blue-400"></i>
-                    <span class="text-sm font-medium">Console</span>
-                </div>
-                <div onclick="navigateTo('page-features')" class="glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-white/10 transition">
-                    <i class="fas fa-puzzle-piece text-2xl text-purple-400"></i>
-                    <span class="text-sm font-medium">Plugins</span>
-                </div>
-                <div onclick="navigateTo('page-features')" class="glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-white/10 transition">
-                    <i class="fas fa-globe text-2xl text-green-400"></i>
-                    <span class="text-sm font-medium">Worlds</span>
-                </div>
-                <div onclick="navigateTo('page-features')" class="glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-white/10 transition">
-                    <i class="fas fa-code-branch text-2xl text-yellow-400"></i>
-                    <span class="text-sm font-medium">PaperMC <br><span class="text-xs text-gray-400">1.21.1</span></span>
+                <div class="p-4 bg-white/5 border-t border-white/10 flex gap-3">
+                    <input type="text" placeholder="Type a command..." class="flex-1 bg-transparent border-none focus:ring-0 text-white placeholder:text-gray-600">
+                    <button class="text-emerald-400 px-4 py-2 hover:bg-emerald-400/10 rounded-xl transition">Send</button>
                 </div>
             </div>
         </div>
-    </div>
 
-
-    <div id="page-console" class="page">
-        <header class="glass-panel p-4 flex items-center gap-4 border-b border-gray-700">
-            <button onclick="navigateTo('page-home')" class="text-gray-400 hover:text-white bg-white/5 p-2 rounded-lg">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <h1 class="text-lg font-bold">Live Console</h1>
-        </header>
-        
-        <div class="p-5">
-            <div class="bg-black/80 rounded-xl p-4 h-[60vh] overflow-y-auto font-mono text-xs text-gray-300 border border-gray-700 shadow-inner">
-                <div class="text-yellow-400">[11:25:00] [Server thread/INFO]: Starting minecraft server version 1.21.1</div>
-                <div class="text-white">[11:25:00] [Server thread/INFO]: Loading properties</div>
-                <div class="text-white">[11:25:01] [Server thread/INFO]: Default game type: SURVIVAL</div>
-                <div class="text-white">[11:25:01] [Server thread/INFO]: Generating keypair</div>
-                <div class="text-red-400">[11:25:03] [Server thread/WARN]: Server is currently offline. Press Start.</div>
-                <div class="animate-pulse mt-2 text-gray-500">_</div>
-            </div>
-            <div class="mt-4 flex gap-2">
-                <input type="text" placeholder="Enter command..." class="w-full bg-white/5 border border-gray-600 rounded-lg p-3 text-sm focus:outline-none focus:border-blue-500 text-white">
-                <button class="bg-blue-600 hover:bg-blue-700 px-4 rounded-lg font-bold"><i class="fas fa-paper-plane"></i></button>
+        <div id="page-features" class="page px-4 lg:px-0">
+            <div class="glass-card rounded-3xl p-20 flex flex-col items-center text-center">
+                <div class="w-24 h-24 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-full flex items-center justify-center mb-6 shadow-2xl shadow-emerald-500/40">
+                    <i class="fas fa-rocket text-4xl text-white"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4">Module Locked</h2>
+                <p class="text-gray-400 max-w-md mx-auto">This feature is part of the premium dashboard. Click the button below to return to the home screen.</p>
+                <button onclick="navigateTo('page-home')" class="mt-8 bg-white text-black px-10 py-3 rounded-2xl font-bold hover:bg-gray-200 transition">Go Back</button>
             </div>
         </div>
-    </div>
 
+    </main>
 
-    <div id="page-features" class="page">
-        <header class="glass-panel p-4 flex items-center gap-4 border-b border-gray-700">
-            <button onclick="navigateTo('page-home')" class="text-gray-400 hover:text-white bg-white/5 p-2 rounded-lg">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <h1 class="text-lg font-bold">Settings / Features</h1>
-        </header>
-        
-        <div class="p-5 flex flex-col items-center justify-center h-[60vh] text-center">
-            <div class="w-20 h-20 bg-gradient-to-tr from-purple-500 to-blue-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(168,85,247,0.4)]">
-                <i class="fas fa-tools text-3xl text-white"></i>
-            </div>
-            <h2 class="text-xl font-bold mb-2">Coming Soon</h2>
-            <p class="text-gray-400 text-sm">Yeh ek prototype page hai. Aapne jis button pe click kiya, uska dashboard yahan open hoga.</p>
-            <button onclick="navigateTo('page-home')" class="mt-6 bg-white/10 hover:bg-white/20 px-6 py-2 rounded-full font-medium transition">
-                Go Back Home
-            </button>
-        </div>
-    </div>
-
-
-    <nav class="fixed bottom-0 w-full max-w-[450px] glass-panel border-t border-gray-700 flex justify-around p-3 z-50 rounded-t-2xl">
-        <button onclick="navigateTo('page-home')" class="flex flex-col items-center text-emerald-400 gap-1">
-            <i class="fas fa-server text-xl"></i>
-            <span class="text-[10px] font-medium">Server</span>
-        </button>
-        <button onclick="navigateTo('page-features')" class="flex flex-col items-center text-gray-500 hover:text-gray-300 transition gap-1">
-            <i class="fas fa-cog text-xl"></i>
-            <span class="text-[10px] font-medium">Options</span>
-        </button>
-        <button onclick="navigateTo('page-features')" class="flex flex-col items-center text-gray-500 hover:text-gray-300 transition gap-1">
-            <i class="fas fa-user text-xl"></i>
-            <span class="text-[10px] font-medium">Account</span>
-        </button>
+    <nav class="mobile-nav fixed bottom-6 left-6 right-6 h-16 glass-card rounded-2xl border border-white/10 flex justify-around items-center z-50 lg:hidden shadow-2xl">
+        <button onclick="navigateTo('page-home')" class="p-3 text-emerald-400"><i class="fas fa-th-large text-xl"></i></button>
+        <button onclick="navigateTo('page-console')" class="p-3 text-gray-500"><i class="fas fa-terminal text-xl"></i></button>
+        <button onclick="navigateTo('page-features')" class="p-3 text-gray-500"><i class="fas fa-cog text-xl"></i></button>
     </nav>
 
-</div>
-
-<script>
-    function navigateTo(pageId) {
-        // Step 1: Hide all pages
-        const pages = document.querySelectorAll('.page');
-        pages.forEach(page => {
-            page.classList.remove('active');
-        });
-
-        // Step 2: Show the target page
-        const targetPage = document.getElementById(pageId);
-        if (targetPage) {
-            targetPage.classList.add('active');
-            window.scrollTo(0, 0); // Scroll to top when changing page
+    <script>
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
         }
-    }
-</script>
-
+    </script>
 </body>
-</html>
+    </html>
+    
