@@ -4,33 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cryonix Cloud | Premium Minecraft Hosting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
             --primary: #00f2ff;
             --secondary: #7000ff;
+            --accent: #ff0055;
             --bg-dark: #050508;
-            --card-bg: rgba(20, 20, 30, 0.7);
+            --card-bg: rgba(15, 15, 25, 0.7);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #e0e0e0;
             --text-dim: #909090;
-            --accent-glow: 0 0 15px rgba(0, 242, 255, 0.5);
-            --neon-purple: 0 0 15px rgba(112, 0, 255, 0.5);
+            --glow: 0 0 20px rgba(0, 242, 255, 0.4);
+            --neon-purple: 0 0 20px rgba(112, 0, 255, 0.4);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Rajdhani', sans-serif;
         }
 
         body {
             background-color: var(--bg-dark);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.1) 0%, transparent 40%);
+                radial-gradient(circle at 15% 15%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(0, 242, 255, 0.1) 0%, transparent 40%);
             color: var(--text-main);
             overflow: hidden;
             height: 100vh;
@@ -45,26 +48,38 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
+            transition: 0.8s cubic-bezier(0.85, 0, 0.15, 1);
         }
 
         .auth-card {
             background: var(--card-bg);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             padding: 40px;
-            border-radius: 20px;
+            border-radius: 24px;
             border: 1px solid var(--glass-border);
-            width: 400px;
-            box-shadow: var(--accent-glow);
+            width: 420px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), var(--glow);
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .auth-card h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
+        .auth-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .auth-subtitle {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .input-group {
@@ -72,69 +87,114 @@
             text-align: left;
         }
 
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
         input {
             width: 100%;
-            padding: 12px;
-            background: rgba(0,0,0,0.3);
+            padding: 14px;
+            background: rgba(0,0,0,0.4);
             border: 1px solid var(--glass-border);
-            border-radius: 8px;
+            border-radius: 12px;
             color: white;
             outline: none;
-            transition: 0.3s;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
         }
 
         input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+            background: rgba(0, 242, 255, 0.05);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
         }
 
-        .btn-glow {
+        .btn-main {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             color: white;
             font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.4s;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        .btn-glow:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--accent-glow);
+        .btn-main:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glow), var(--neon-purple);
+            filter: brightness(1.1);
         }
 
-        /* --- DASHBOARD LAYOUT --- */
+        .auth-toggle-text {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .auth-toggle-btn {
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .auth-toggle-btn:hover {
+            text-shadow: 0 0 8px var(--primary);
+        }
+
+        /* Form Visibility Transitions */
+        .auth-form {
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .hidden-form {
+            display: none;
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        /* --- DASHBOARD STRUCTURE --- */
         #main-panel {
             display: grid;
-            grid-template-columns: 260px 1fr;
+            grid-template-columns: 280px 1fr;
             height: 100vh;
             opacity: 0;
+            visibility: hidden;
             transition: 1s ease;
         }
 
-        /* Sidebar */
         .sidebar {
-            background: rgba(10, 10, 15, 0.8);
+            background: rgba(8, 8, 12, 0.95);
             border-right: 1px solid var(--glass-border);
-            padding: 20px;
+            padding: 30px 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .nav-item {
-            padding: 12px 15px;
-            border-radius: 10px;
+            padding: 14px 18px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             color: var(--text-dim);
+            font-size: 1.1rem;
         }
 
         .nav-item:hover, .nav-item.active {
@@ -143,107 +203,92 @@
             box-shadow: inset 4px 0 0 var(--primary);
         }
 
-        /* Content Area */
         .content {
-            padding: 30px;
+            padding: 40px;
             overflow-y: auto;
+            background: radial-gradient(circle at center, rgba(112, 0, 255, 0.03), transparent);
         }
 
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .status-badge {
-            padding: 5px 15px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: var(--card-bg);
             border-radius: 20px;
-            font-size: 0.8rem;
-            background: rgba(0, 255, 127, 0.1);
-            color: #00ff7f;
-            border: 1px solid #00ff7f;
+            border: 1px solid var(--glass-border);
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
+            gap: 25px;
             margin-bottom: 30px;
         }
 
         .stat-card {
             background: var(--card-bg);
             border: 1px solid var(--glass-border);
-            padding: 20px;
-            border-radius: 15px;
+            padding: 25px;
+            border-radius: 20px;
             position: relative;
-            overflow: hidden;
+            transition: 0.3s;
         }
 
-        .stat-card h3 { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 10px; }
-        .stat-value { font-size: 1.8rem; font-weight: bold; }
+        .stat-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+        }
 
-        /* Console Area */
+        .stat-card h3 { color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 2rem; font-weight: bold; font-family: 'Orbitron', sans-serif; margin-top: 10px; }
+
         .console-container {
             background: #000;
-            border-radius: 10px;
+            border-radius: 20px;
             border: 1px solid var(--glass-border);
-            height: 400px;
+            height: 450px;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .console-logs {
             flex: 1;
-            padding: 15px;
-            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            font-family: 'Consolas', monospace;
             font-size: 0.9rem;
             overflow-y: auto;
-            color: #00ff7f;
+            color: #00ffcc;
+            line-height: 1.6;
         }
 
-        .console-input {
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
+        .console-input-area {
+            background: rgba(255,255,255,0.03);
+            padding: 15px 20px;
             display: flex;
-            gap: 10px;
+            gap: 15px;
             border-top: 1px solid var(--glass-border);
         }
 
-        .console-input input { background: transparent; border: none; }
-
-        /* File Manager Mock */
-        .file-list {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .file-item {
-            padding: 10px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Toast Notifications */
-        .toast-container {
+        /* Notification System */
+        #toast-box {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 2000;
+            top: 30px;
+            right: 30px;
+            z-index: 9999;
         }
+
         .toast {
             background: var(--card-bg);
+            backdrop-filter: blur(15px);
             border-left: 4px solid var(--primary);
-            padding: 15px 25px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            backdrop-filter: blur(10px);
-            animation: slideIn 0.3s ease-out;
+            padding: 18px 25px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: slideIn 0.4s ease forwards;
         }
 
         @keyframes slideIn {
@@ -251,266 +296,234 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            #main-panel { grid-template-columns: 1fr; }
-            .sidebar { display: none; }
-        }
-
-        /* Animations */
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top: 4px solid var(--primary);
+        .loading-ring {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            display: inline-block;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="toast-box" class="toast-container"></div>
+    <div id="toast-box"></div>
 
     <div id="auth-screen">
         <div class="auth-card">
-            <h1>CRYONIX CLOUD</h1>
-            <p style="color: var(--text-dim); margin-bottom: 25px;">Enter the Matrix</p>
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" placeholder="admin@cryonix.xyz" id="login-email">
+            <div class="auth-header">
+                <h1>CRYONIX CLOUD</h1>
+                <p class="auth-subtitle" id="auth-state-text">Gateway Authorization</p>
             </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" placeholder="••••••••" id="login-pass">
+
+            <div id="login-form" class="auth-form">
+                <div class="input-group">
+                    <label>Terminal Identifier</label>
+                    <input type="email" placeholder="admin@cryonix.xyz" id="login-email">
+                </div>
+                <div class="input-group">
+                    <label>Security Key</label>
+                    <input type="password" placeholder="••••••••" id="login-pass">
+                </div>
+                <button class="btn-main" onclick="handleAuth('login')">Initialize Link</button>
+                <p class="auth-toggle-text">
+                    New Operator? <span class="auth-toggle-btn" onclick="toggleAuth('register')">Register Terminal</span>
+                </p>
             </div>
-            <button class="btn-glow" onclick="handleLogin()">Initialize Link</button>
+
+            <div id="register-form" class="auth-form hidden-form">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" placeholder="OperatorName" id="reg-user">
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="user@domain.com" id="reg-email">
+                </div>
+                <div class="input-group">
+                    <label>Security Key</label>
+                    <input type="password" placeholder="••••••••" id="reg-pass">
+                </div>
+                <button class="btn-main" onclick="handleAuth('register')">Register</button>
+                <p class="auth-toggle-text">
+                    Already Synced? <span class="auth-toggle-btn" onclick="toggleAuth('login')">Return to Login</span>
+                </p>
+            </div>
         </div>
     </div>
 
     <div id="main-panel">
-        <div class="sidebar">
-            <div style="margin-bottom: 30px; padding-left: 15px;">
-                <h2 style="color: var(--primary); letter-spacing: 2px;">CRYONIX</h2>
-                <small style="color: var(--text-dim);">v4.0.0-QUANTUM</small>
+        <aside class="sidebar">
+            <div style="margin-bottom: 40px; text-align: center;">
+                <h2 style="font-family: 'Orbitron'; color: var(--primary); font-size: 1.5rem;">CORE-01</h2>
+                <small style="color: var(--text-dim); letter-spacing: 2px;">SECURE NODE</small>
             </div>
-            <div class="nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-terminal"></i> Console</div>
-            <div class="nav-item" onclick="switchTab('files')"><i class="fas fa-folder"></i> File Manager</div>
-            <div class="nav-item" onclick="switchTab('plugins')"><i class="fas fa-plug"></i> Plugin Installer</div>
-            <div class="nav-item" onclick="switchTab('backups')"><i class="fas fa-archive"></i> Backups</div>
-            <div class="nav-item" onclick="switchTab('network')"><i class="fas fa-network-wired"></i> Network</div>
-            <div class="nav-item" onclick="switchTab('settings')"><i class="fas fa-cog"></i> Settings</div>
-            
-            <div style="margin-top: auto; padding: 20px; background: rgba(112,0,255,0.1); border-radius: 15px;">
-                <p style="font-size: 0.8rem; margin-bottom: 10px;">PRO PLAN</p>
-                <button class="btn-glow" style="font-size: 0.7rem;" onclick="upgradeRAM()">UPGRADE RAM</button>
-            </div>
-        </div>
 
-        <div class="content">
+            <nav>
+                <div class="nav-item active" onclick="switchTab('dash', this)"><i class="fas fa-terminal"></i> Console</div>
+                <div class="nav-item" onclick="switchTab('files', this)"><i class="fas fa-folder"></i> File Manager</div>
+                <div class="nav-item" onclick="switchTab('plugins', this)"><i class="fas fa-plug"></i> Plugins</div>
+                <div class="nav-item" onclick="switchTab('network', this)"><i class="fas fa-network-wired"></i> Network</div>
+                <div class="nav-item" onclick="switchTab('settings', this)"><i class="fas fa-cog"></i> Settings</div>
+            </nav>
+            
+            <div style="margin-top: auto; padding: 25px; background: rgba(112,0,255,0.1); border-radius: 20px; border: 1px solid var(--secondary);">
+                <p style="font-size: 0.8rem; margin-bottom: 12px; color: #fff;">RESOURCE STATUS: 8GB</p>
+                <button class="btn-main" style="font-size: 0.7rem; padding: 10px;" onclick="upgradeRAM()">UPGRADE TO 16GB</button>
+            </div>
+        </aside>
+
+        <main class="content">
             <div class="top-bar">
                 <div>
-                    <h2 id="page-title">Server Instance: Core-01</h2>
-                    <p style="color: var(--text-dim); font-size: 0.9rem;">IP: <span style="color: var(--primary);">play.cryonixhs.xyz</span></p>
+                    <h2 id="page-title" style="font-family: 'Orbitron';">CRYONIX CONSOLE</h2>
+                    <p style="color: var(--primary); font-size: 0.9rem; font-weight: bold;">NODE IP: play.cryonixhs.xyz</p>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-glow" style="background: #00ff7f22; border: 1px solid #00ff7f; width: auto; padding: 8px 20px;" onclick="serverAction('start')">START</button>
-                    <button class="btn-glow" style="background: #ff444422; border: 1px solid #ff4444; width: auto; padding: 8px 20px;" onclick="serverAction('stop')">STOP</button>
-                    <button class="btn-glow" style="background: #ffa50022; border: 1px solid #ffa500; width: auto; padding: 8px 20px;" onclick="serverAction('restart')">RESTART</button>
+                <div style="display: flex; gap: 15px;">
+                    <button class="btn-main" style="background: rgba(0, 255, 127, 0.15); border: 1px solid #00ff7f; width: auto; padding: 10px 25px;" onclick="srvAction('START')">START</button>
+                    <button class="btn-main" style="background: rgba(255, 68, 68, 0.15); border: 1px solid #ff4444; width: auto; padding: 10px 25px;" onclick="srvAction('STOP')">STOP</button>
                 </div>
             </div>
 
-            <div id="tab-dashboard">
+            <div id="tab-dash">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <h3>CPU USAGE</h3>
-                        <div class="stat-value" id="cpu-val">0%</div>
-                        <div style="height: 40px; margin-top: 10px;"><canvas id="cpuChart"></canvas></div>
+                        <h3>CPU Load</h3>
+                        <div class="stat-value" id="cpu-load">0.0%</div>
+                        <canvas id="cpuChart" style="height:60px; margin-top:15px;"></canvas>
                     </div>
                     <div class="stat-card">
-                        <h3>RAM USAGE</h3>
-                        <div class="stat-value" id="ram-val">0.0 GB / 8.0 GB</div>
+                        <h3>RAM Memory</h3>
+                        <div class="stat-value" id="ram-usage">0.0 / 8.0 GB</div>
                     </div>
                     <div class="stat-card">
-                        <h3>PLAYERS</h3>
-                        <div class="stat-value">12 / 100</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>TPS / UPTIME</h3>
-                        <div class="stat-value">20.0 / 4d 12h</div>
+                        <h3>Uptime</h3>
+                        <div class="stat-value">12d 4h 32m</div>
                     </div>
                 </div>
 
                 <div class="console-container">
-                    <div class="console-logs" id="console-out">
-                        [SYSTEM] Authenticated as Senior_Developer...<br>
-                        [SYSTEM] Booting Cryonix OS...<br>
-                        [SYSTEM] Connecting to play.cryonixhs.xyz...<br>
-                        [INFO] Loading world 'world_nether'...<br>
-                        [INFO] Preparing spawn area: 85%<br>
-                        [READY] Server started on port 25565!
+                    <div class="console-logs" id="con-logs">
+                        [SYS] Initializing Virtual Environment...<br>
+                        [SYS] Mounting File System... Success.<br>
+                        [SYS] Establishing Link to play.cryonixhs.xyz...<br>
+                        [INFO] Minecraft Version: 1.20.4 (Paper)<br>
+                        [INFO] Welcome to Cryonix Cloud Dashboard.
                     </div>
-                    <div class="console-input">
-                        <span style="color: var(--primary)">$</span>
-                        <input type="text" placeholder="Send command to server..." id="cmd-input" onkeypress="if(event.key === 'Enter') sendCommand()">
+                    <div class="console-input-area">
+                        <span style="color: var(--primary)">▶</span>
+                        <input type="text" placeholder="Send command to terminal..." id="cmd-in" onkeypress="if(event.key === 'Enter') sendCmd()">
                     </div>
                 </div>
             </div>
 
             <div id="tab-files" class="hidden">
-                <div class="stat-card" style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: space-between;">
                         <h3>Directory: /home/container</h3>
-                        <button class="btn-glow" style="width: auto; padding: 5px 15px;">Upload File</button>
+                        <button class="auth-toggle-btn">Upload New File</button>
                     </div>
-                </div>
-                <div class="file-list">
-                    <div class="file-item"><p><i class="far fa-folder" style="color: #ffa500"></i> plugins</p><span>DIR</span></div>
-                    <div class="file-item"><p><i class="far fa-folder" style="color: #ffa500"></i> world</p><span>DIR</span></div>
-                    <div class="file-item"><p><i class="far fa-file-code" style="color: var(--primary)"></i> server.properties</p><span>12 KB</span></div>
-                    <div class="file-item"><p><i class="far fa-file-code" style="color: var(--primary)"></i> spigot.yml</p><span>8 KB</span></div>
-                    <div class="file-item"><p><i class="far fa-file-alt" style="color: #fff"></i> eula.txt</p><span>1 KB</span></div>
+                    <div style="margin-top: 20px; display: grid; gap: 10px;">
+                        <div style="padding:15px; background:rgba(255,255,255,0.05); border-radius:10px; display:flex; justify-content:space-between;">
+                            <span><i class="far fa-folder" style="color:orange; margin-right:10px;"></i> world/</span>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div style="padding:15px; background:rgba(255,255,255,0.05); border-radius:10px; display:flex; justify-content:space-between;">
+                            <span><i class="far fa-file-code" style="color:var(--primary); margin-right:10px;"></i> server.properties</span>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div id="tab-network" class="hidden">
                 <div class="stat-card">
-                    <h3>Domain Management</h3>
-                    <p style="margin: 15px 0;">Current IP: <b>play.cryonixhs.xyz:25565</b></p>
-                    <div class="input-group">
-                        <label>Add Custom Domain</label>
-                        <input type="text" placeholder="mc.yourdomain.com" id="domain-input">
+                    <h3>Domain System</h3>
+                    <div class="input-group" style="margin-top: 20px;">
+                        <label>Register Custom Domain</label>
+                        <input type="text" placeholder="mc.myserver.com" id="domain-req">
                     </div>
-                    <button class="btn-glow" onclick="addDomain()">Link Domain</button>
+                    <button class="btn-main" onclick="requestDomain()">Link Domain</button>
                 </div>
             </div>
-
-            <div id="tab-settings" class="hidden">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Startup Version</h3>
-                        <select style="width:100%; padding:10px; background: #000; color: #fff; border: 1px solid var(--glass-border); border-radius: 5px;">
-                            <option>Paper 1.20.1 (Latest)</option>
-                            <option>Spigot 1.8.8</option>
-                            <option>Forge 1.12.2</option>
-                        </select>
-                        <button class="btn-glow" style="margin-top: 15px;">Save Config</button>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+        </main>
     </div>
 
     <script>
-        // --- LOGIC & SYSTEM ---
-        
-        function handleLogin() {
-            const btn = document.querySelector('.btn-glow');
-            btn.innerHTML = '<div class="loading-spinner" style="width:20px; height:20px; margin:auto;"></div>';
-            
+        // --- AUTH LOGIC ---
+        function toggleAuth(type) {
+            const login = document.getElementById('login-form');
+            const register = document.getElementById('register-form');
+            const stateText = document.getElementById('auth-state-text');
+
+            if(type === 'register') {
+                login.style.transform = 'translateX(-20px)';
+                login.style.opacity = '0';
+                setTimeout(() => {
+                    login.classList.add('hidden-form');
+                    register.classList.remove('hidden-form');
+                    setTimeout(() => {
+                        register.style.transform = 'translateX(0)';
+                        register.style.opacity = '1';
+                    }, 50);
+                }, 400);
+                stateText.innerText = "Register New Node";
+            } else {
+                register.style.transform = 'translateX(20px)';
+                register.style.opacity = '0';
+                setTimeout(() => {
+                    register.classList.add('hidden-form');
+                    login.classList.remove('hidden-form');
+                    setTimeout(() => {
+                        login.style.transform = 'translateX(0)';
+                        login.style.opacity = '1';
+                    }, 50);
+                }, 400);
+                stateText.innerText = "Gateway Authorization";
+            }
+        }
+
+        function handleAuth(mode) {
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerHTML = `<div class="loading-ring"></div>`;
+            btn.disabled = true;
+
             setTimeout(() => {
+                showToast("SUCCESS", `Authentication link verified. Welcome Operator.`);
                 document.getElementById('auth-screen').style.transform = 'translateY(-100%)';
-                document.getElementById('main-panel').style.opacity = '1';
-                showToast("Connection Established", "Welcome back, Operator.");
-                startSimulators();
+                const main = document.getElementById('main-panel');
+                main.style.visibility = 'visible';
+                main.style.opacity = '1';
+                initTelemetry();
             }, 1500);
         }
 
-        function showToast(title, msg) {
-            const box = document.getElementById('toast-box');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `<strong>${title}</strong><br><small>${msg}</small>`;
-            box.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
-        }
-
-        function switchTab(tabId) {
-            // Update Nav UI
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            // Hide all tabs
-            const tabs = ['dashboard', 'files', 'network', 'settings'];
-            tabs.forEach(t => document.getElementById(`tab-${t}`).classList.add('hidden'));
+        // --- DASHBOARD LOGIC ---
+        function switchTab(id, el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
             
-            // Show selected
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            document.getElementById('page-title').innerText = tabId.charAt(0).toUpperCase() + tabId.slice(1);
-        }
-
-        function serverAction(action) {
-            showToast("System Command", `Executing ${action.toUpperCase()}...`);
-            const log = document.getElementById('console-out');
-            const time = new Date().toLocaleTimeString();
-            log.innerHTML += `<br><span style="color: #ffa500">[${time}] [SYSTEM]: Received ${action} signal...</span>`;
-            log.scrollTop = log.scrollHeight;
-        }
-
-        function sendCommand() {
-            const input = document.getElementById('cmd-input');
-            const log = document.getElementById('console-out');
-            if(!input.value) return;
-
-            log.innerHTML += `<br><span style="color: #fff">> ${input.value}</span>`;
-            
-            // Mock Response Logic
-            if(input.value.toLowerCase() === 'help') {
-                log.innerHTML += `<br><span style="color: #00f2ff">[CRYONIX] Available: stop, kick, op, reload, status</span>`;
-            } else {
-                log.innerHTML += `<br><span style="color: #909090">[Server] Command executed successfully.</span>`;
-            }
-            
-            input.value = '';
-            log.scrollTop = log.scrollHeight;
-        }
-
-        // --- SPECIAL CUSTOM FEATURES ---
-
-        function upgradeRAM() {
-            window.open('https://youtube.com/@nekostrikesg?si=C5DEbxOnHCsWag2o', '_blank');
-            alert("Subscribe required. After 24 hours you will receive +5GB RAM. Please wait.");
-            showToast("RAM Upgrade", "Processing subscription status...");
-        }
-
-        function addDomain() {
-            const domain = document.getElementById('domain-input').value;
-            if(!domain) return;
-            alert("Join our Discord and contact NekoStrikeSG to activate custom domain.");
-            window.open('https://discord.gg/wzWWDq2HU', '_blank');
-        }
-
-        // --- SIMULATORS (CPU/RAM/Charts) ---
-
-        function startSimulators() {
-            // CPU Chart
-            const ctx = document.getElementById('cpuChart').getContext('2d');
-            const cpuChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['', '', '', '', '', '', '', '', '', ''],
-                    datasets: [{
-                        data: [10, 15, 12, 18, 25, 20, 22, 15, 18, 14],
-                        borderColor: '#00f2ff',
-                        borderWidth: 2,
-                        fill: true,
-                        backgroundColor: 'rgba(0, 242, 255, 0.1)',
-                        pointRadius: 0,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { display: false }, y: { display: false } }
-                }
+            ['dash', 'files', 'network'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
             });
+            document.getElementById(`tab-${id}`).classList.remove('hidden');
+            document.getElementById('page-title').innerText = id === 'dash' ? 'CRYONIX CONSOLE' : id.toUpperCase();
+        }
 
-            // Update stats every 2 seconds
-            setInterval(() => {
-            
+        function srvAction(action) {
+            showToast("CMD SENT", `Signal: ${action}`);
+            const logs = document.getElementById('con-logs');
+            logs.innerHTML += `<br><span style="color: #ffaa00">[USER] Requesting server ${action}...</span>`;
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function sendCmd() {
+            const inp = document.getElementById('cmd-in');
+   
