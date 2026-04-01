@@ -3,179 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Admin Panel</title>
+    <title>CyberHost - Minecraft Panel</title>
     <style>
         :root {
-            --dirt: #795548;
-            --grass: #4caf50;
-            --stone: #757575;
-            --redstone: #f44336;
-            --gold: #ffc107;
-            --border: #212121;
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --bg: #0b0e14;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text: #ffffff;
+            --success: #00ff88;
+            --danger: #ff4d4d;
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+
         body {
-            background-color: #333;
-            font-family: 'Courier New', Courier, monospace;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden; /* Prevents scroll during transitions */
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            color: white;
         }
 
-        /* Container & Auth Box */
-        .app-container {
-            width: 90%;
-            max-width: 900px;
-            background: var(--stone);
-            border: 6px solid var(--border);
-            box-shadow: 12px 12px 0px rgba(0,0,0,0.5);
-            padding: 30px;
-        }
-
-        .hidden { display: none !important; }
-
-        h2 { text-transform: uppercase; letter-spacing: 2px; text-shadow: 3px 3px 0 var(--border); }
-
-        /* Form Styling */
-        .auth-form {
+        /* --- SMOOTH SLIDE ANIMATION --- */
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        input {
-            padding: 15px;
-            border: 4px solid var(--border);
-            background: #eee;
-            font-size: 1rem;
-            font-weight: bold;
-            outline: none;
-        }
-
-        /* The Buttons */
-        .btn {
-            padding: 15px;
-            border: 4px solid var(--border);
-            background: var(--grass);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: 4px 4px 0px var(--border);
-            transition: all 0.1s;
-        }
-
-        .btn:active {
-            box-shadow: 0px 0px 0px var(--border);
-            transform: translate(4px, 4px);
-        }
-
-        .btn-alt { background: var(--dirt); }
-        .btn-danger { background: var(--redstone); }
-        .btn-warn { background: var(--gold); color: black; }
-
-        /* Control Panel Grid */
-        .control-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .panel-header {
-            border-bottom: 4px solid var(--border);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
         }
 
-        .status-badge {
-            background: #000;
-            color: #0f0;
-            padding: 5px 10px;
-            font-size: 0.8rem;
+        .slide-up { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        .hidden { display: none; }
+
+        /* --- UNIQUE GLOWING LOGIN --- */
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.1);
+            text-align: center;
+            width: 350px;
         }
+
+        .login-card h2 { margin-bottom: 25px; letter-spacing: 2px; color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+
+        .input-group { position: relative; margin-bottom: 20px; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .login-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px var(--primary); }
+
+        /* --- DASHBOARD UI (The Merge) --- */
+        .dashboard-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            background: #0f121a;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .nav-item {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            background: var(--card-bg);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s;
+            font-size: 10px;
+        }
+
+        .nav-item:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+
+        .status-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid var(--success);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .status-info h3 { color: var(--success); text-shadow: 0 0 10px var(--success); }
+
+        /* Action Grid (The "Buttons") */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .action-btn.start { color: var(--success); }
+        .action-btn.stop { color: var(--danger); }
+        .action-btn.restart { color: #ffae00; }
+
+        .server-stats {
+            margin-top: 30px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; padding: 10px; opacity: 0.6; }
+        td { padding: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    
-    <div id="auth-section">
-        <h2 id="auth-title">System Login</h2>
-        <div class="auth-form">
-            <input type="text" id="username" placeholder="USERNAME">
-            <input type="password" id="password" placeholder="PASSWORD">
-            <button class="btn" onclick="handleAuth()">Login to Server</button>
-            <button class="btn btn-alt" onclick="toggleAuth()" id="toggle-btn">Need to Register?</button>
+    <div id="login-page" class="page">
+        <div class="login-card">
+            <h2>CRYONIX MC</h2>
+            <div class="input-group">
+                <input type="text" placeholder="Email Address">
+            </div>
+            <div class="input-group">
+                <input type="password" placeholder="Password">
+            </div>
+            <button class="login-btn" onclick="login()">Access Console</button>
+            <p style="font-size: 12px; margin-top: 15px; opacity: 0.5;">Forget Password?</p>
         </div>
     </div>
 
-    <div id="panel-section" class="hidden">
-        <div class="panel-header">
-            <h2>Server Control Panel</h2>
-            <div class="status-badge">● SERVER ONLINE</div>
-        </div>
-        
-        <div class="control-grid">
-            <button class="btn btn-danger">Stop Server</button>
-            <button class="btn btn-warn">Restart</button>
-            <button class="btn">Start Backup</button>
-            <button class="btn btn-alt">World Settings</button>
-            <button class="btn">Player List</button>
-            <button class="btn">Whitelist</button>
-            <button class="btn btn-danger">Ban Hammer</button>
-            <button class="btn">View Console</button>
-            <button class="btn btn-alt">Plugin Manager</button>
-            <button class="btn">Mod Installer</button>
-            <button class="btn btn-warn">File Manager</button>
-            <button class="btn">Resource Packs</button>
-            <button class="btn">Network Usage</button>
-            <button class="btn btn-alt">SQL Database</button>
-            <button class="btn">API Access</button>
-            <button class="btn btn-danger" onclick="logout()">Logout / Shutdown</button>
+    <div id="dashboard-page" class="page slide-up">
+        <div class="dashboard-container">
+            <div class="sidebar">
+                <div class="nav-item">Dash</div>
+                <div class="nav-item">Cons</div>
+                <div class="nav-item">Files</div>
+                <div class="nav-item">Net</div>
+            </div>
+            <div class="main-content">
+                <div class="header">
+                    <h1>Server Instance</h1>
+                    <button class="login-btn" style="width: auto; padding: 8px 20px;" onclick="logout()">Logout</button>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-info">
+                        <p>Current Status</p>
+                        <h3>ONLINE</h3>
+                    </div>
+                    <div style="text-align: right;">
+                        <p>IP: cryonixmc.at.me:25565</p>
+                        <p>Players: 12/50</p>
+                    </div>
+                </div>
+
+                <div class="action-grid">
+                    <div class="action-btn start">▶ START</div>
+                    <div class="action-btn restart">↻ RESTART</div>
+                    <div class="action-btn stop">⏹ STOP</div>
+                    <div class="action-btn">📁 FILES</div>
+                    <div class="action-btn">🔧 CONFIG</div>
+                    <div class="action-btn">🔨 BANS</div>
+                    <div class="action-btn">📊 USAGE</div>
+                    <div class="action-btn">☁ BACKUP</div>
+                </div>
+
+                <div class="server-stats">
+                    <h3>Server Information</h3>
+                    <table>
+                        <tr><th>Software</th><td>PaperMC</td></tr>
+                        <tr><th>Version</th><td>1.21.1</td></tr>
+                        <tr><th>RAM</th><td>4.0 GB / 8.0 GB</td></tr>
+                        <tr><th>Uptime</th><td>4d 12h 30m</td></tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-</div>
-
-<script>
-    let isLogin = true;
-
-    function toggleAuth() {
-        isLogin = !isLogin;
-        document.getElementById('auth-title').innerText = isLogin ? "System Login" : "Create Account";
-        document.getElementById('toggle-btn').innerText = isLogin ? "Need to Register?" : "Back to Login";
-    }
-
-    function handleAuth() {
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
-
-        if(user && pass) {
-            // Simplified logic: Just check if fields aren't empty
-            alert(isLogin ? "Welcome back, Admin!" : "Account created successfully!");
-            document.getElementById('auth-section').classList.add('hidden');
-            document.getElementById('panel-section').classList.remove('hidden');
-        } else {
-            alert("Please enter credentials!");
+    <script>
+        function login() {
+            // Smooth Slide Up Transition
+            document.getElementById('login-page').classList.add('slide-up');
+            document.getElementById('dashboard-page').classList.remove('slide-up');
         }
-    }
 
-    function logout() {
-        if(confirm("Log out and return to main screen?")) {
-            document.getElementById('auth-section').classList.remove('hidden');
-            document.getElementById('panel-section').classList.add('hidden');
+        function logout() {
+            // Smooth Slide Back Down
+            document.getElementById('login-page').classList.remove('slide-up');
+            document.getElementById('dashboard-page').classList.add('slide-up');
         }
-    }
-</script>
-
+    </script>
 </body>
-</html>
+                        </html>
+    
