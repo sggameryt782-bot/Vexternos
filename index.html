@@ -1,317 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovaHost | Ultimate Server Panel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Outfit:wght@300;400;600;700&display=swap');
-        
-        :root {
-            --bg-main: #0b0f13;
-            --bg-side: #161b22;
-            --accent: #3b82f6;
-            --success: #10b981;
-            --danger: #ef4444;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaHost Panel</title>
 
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-main);
-            color: #e6edf3;
-            margin: 0;
-            overflow: hidden;
-        }
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
+<style>
+body {
+    background:#0b0f13;
+    color:white;
+    font-family:sans-serif;
+    margin:0;
+}
 
-        .sidebar {
-            width: 280px;
-            background-color: var(--bg-side);
-            height: 100vh;
-            border-right: 1px solid #30363d;
-            transition: all 0.3s ease;
-        }
+/* Sidebar */
+.sidebar {
+    width:260px;
+    background:#161b22;
+    height:100vh;
+    position:fixed;
+    left:-300px;
+    top:0;
+    transition:0.4s;
+    z-index:50;
+}
+.sidebar.active {
+    left:0;
+}
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            margin: 4px 12px;
-            border-radius: 12px;
-            color: #8b949e;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+/* Overlay */
+.overlay {
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    display:none;
+    z-index:40;
+}
+.overlay.active {
+    display:block;
+}
 
-        .nav-item:hover, .nav-item.active {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--accent);
-        }
+/* Nav */
+.nav-item {
+    padding:12px 20px;
+    cursor:pointer;
+    color:#aaa;
+    transition:0.3s;
+}
+.nav-item:hover {
+    color:#3b82f6;
+    transform:translateX(5px);
+}
 
-        .main-container {
-            flex: 1;
-            height: 100vh;
-            overflow-y: auto;
-            position: relative;
-        }
+/* Page */
+.page {display:none;}
+.page.active {display:block;}
 
-        /* Status Glow */
-        .status-online { color: var(--success); text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
-        .status-offline { color: var(--danger); }
+/* Buttons */
+.btn {
+    padding:10px;
+    border-radius:10px;
+    font-weight:bold;
+    transition:0.2s;
+}
+.btn:active {transform:scale(0.95);}
 
-        .glass-card {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 16px;
-        }
-
-        .console-box {
-            font-family: 'JetBrains Mono', monospace;
-            background: #010409;
-            border: 1px solid #30363d;
-            height: 400px;
-            overflow-y: auto;
-            padding: 15px;
-            font-size: 13px;
-        }
-
-        .page { display: none; animation: fadeIn 0.3s ease; }
-        .page.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 1024px) {
-            .sidebar { display: none; }
-            .mobile-nav { display: flex !important; }
-        }
-    </style>
+</style>
 </head>
-<body class="flex">
 
-    <aside class="sidebar flex flex-col py-6">
-        <div class="px-8 mb-8 flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
-                <i class="fas fa-bolt text-white text-xl"></i>
-            </div>
-            <span class="text-xl font-bold tracking-tight">NovaHost</span>
+<body>
+
+<!-- Overlay -->
+<div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <h2 style="padding:20px;">⚡ NovaHost</h2>
+
+    <div class="nav-item" onclick="showPage('home')">Dashboard</div>
+    <div class="nav-item" onclick="showPage('console')">Console</div>
+    <div class="nav-item" onclick="showPage('files')">Files</div>
+    <div class="nav-item" onclick="showPage('players')">Players</div>
+    <div class="nav-item" onclick="showPage('backup')">Backups</div>
+    <div class="nav-item" onclick="showPage('settings')">Settings</div>
+</div>
+
+<!-- Main -->
+<div style="margin-left:0; padding:20px;">
+
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button onclick="toggleSidebar()" style="font-size:20px;">☰</button>
+
+        <div id="status" style="color:red;">● Offline</div>
+
+        <div>
+            <button onclick="startServer()" class="btn" style="background:green;">Start</button>
+            <button onclick="restartServer()" class="btn" style="background:orange;">Restart</button>
+            <button onclick="stopServer()" class="btn" style="background:red;">Stop</button>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="page-home" class="page active">
+        <h2>Dashboard</h2>
+
+        <p>Server Address: myserver.novahost.me</p>
+
+        <h3>RAM Control</h3>
+        <input type="range" min="512" max="16384" value="2048" style="width:100%;">
+        <p>512MB → 16GB</p>
+    </div>
+
+    <!-- Console -->
+    <div id="page-console" class="page">
+        <h2>Console</h2>
+
+        <div style="background:black; height:200px; padding:10px; overflow:auto;">
+            <p>[System] Server offline</p>
         </div>
 
-        <nav class="flex-1 overflow-y-auto">
-            <div onclick="showPage('home')" class="nav-item active"><i class="fas fa-columns w-5"></i> Dashboard</div>
-            <div onclick="showPage('console')" class="nav-item"><i class="fas fa-terminal w-5"></i> Console</div>
-            <div onclick="showPage('files')" class="nav-item"><i class="fas fa-folder-open w-5"></i> File Manager</div>
-            <div onclick="showPage('software')" class="nav-item"><i class="fas fa-microchip w-5"></i> Software</div>
-            <div onclick="showPage('players')" class="nav-item"><i class="fas fa-users w-5"></i> Players</div>
-            <div onclick="showPage('backups')" class="nav-item"><i class="fas fa-history w-5"></i> Backups</div>
-            <div onclick="showPage('network')" class="nav-item"><i class="fas fa-network-wired w-5"></i> Network</div>
-            <div onclick="showPage('settings')" class="nav-item"><i class="fas fa-cog w-5"></i> Settings</div>
-        </nav>
+        <input type="text" placeholder="Command..." style="width:80%;">
+        <button class="btn" style="background:blue;">Send</button>
+    </div>
 
-        <div class="px-6 pt-4 mt-4 border-t border-gray-800">
-            <div class="flex items-center gap-3 p-3 glass-card">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500"></div>
-                <div>
-                    <p class="text-xs font-bold">Player_One</p>
-                    <p class="text-[10px] text-gray-500">Free Tier</p>
-                </div>
-            </div>
-        </div>
-    </aside>
+    <!-- Files -->
+    <div id="page-files" class="page">
+        <h2>File Manager</h2>
+        <p>Upload / Edit files</p>
+    </div>
 
-    <main class="main-container">
-        
-        <header class="sticky top-0 z-40 flex items-center justify-between px-8 py-4 bg-[#0b0f13]/80 backdrop-blur-md border-b border-gray-800">
-            <div class="flex items-center gap-6">
-                <div>
-                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Server Status</p>
-                    <p class="text-sm font-bold status-offline" id="global-status">● Offline</p>
-                </div>
-                <div class="hidden md:block">
-                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Address</p>
-                    <p class="text-sm font-mono">myserver.novahost.me:25565 <i class="fas fa-copy ml-2 cursor-pointer text-gray-600"></i></p>
-                </div>
-            </div>
+    <!-- Players -->
+    <div id="page-players" class="page">
+        <h2>🚧 Coming Soon</h2>
+    </div>
 
-            <div class="flex items-center gap-3">
-                <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-900/20">
-                    <i class="fas fa-play"></i> START
-                </button>
-                <button class="bg-gray-800 hover:bg-gray-700 text-white p-2.5 rounded-lg border border-gray-700">
-                    <i class="fas fa-redo"></i>
-                </button>
-                <button class="bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white p-2.5 rounded-lg border border-red-600/20 transition">
-                    <i class="fas fa-stop"></i>
-                </button>
-            </div>
-        </header>
+    <!-- Backup -->
+    <div id="page-backup" class="page">
+        <h2>🚧 Coming Soon</h2>
+    </div>
 
-        <div class="p-8">
-            
-            <div id="page-home" class="page active">
-                <div class="mb-8 p-4 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <i class="fas fa-hourglass-half text-blue-400 animate-spin"></i>
-                        <div>
-                            <p class="text-sm font-bold">Queue Position: #4</p>
-                            <p class="text-xs text-gray-400">Estimated wait time: 2 minutes</p>
-                        </div>
-                    </div>
-                    <button class="text-xs font-bold text-blue-400 underline">Buy Priority</button>
-                </div>
+    <!-- Settings -->
+    <div id="page-settings" class="page">
+        <h2>Settings</h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="glass-card p-6">
-                        <p class="text-xs text-gray-500 font-bold mb-1">RAM USAGE</p>
-                        <h2 class="text-2xl font-bold">0 MB <span class="text-gray-600 text-sm">/ 2 GB</span></h2>
-                        <div class="w-full bg-gray-800 h-1.5 mt-4 rounded-full"><div class="bg-blue-500 h-full w-[5%]"></div></div>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-xs text-gray-500 font-bold mb-1">CPU LOAD</p>
-                        <h2 class="text-2xl font-bold">0%</h2>
-                        <div class="w-full bg-gray-800 h-1.5 mt-4 rounded-full"><div class="bg-emerald-500 h-full w-[2%]"></div></div>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-xs text-gray-500 font-bold mb-1">TPS</p>
-                        <h2 class="text-2xl font-bold text-emerald-400">20.0</h2>
-                        <p class="text-[10px] text-gray-500 mt-2">Perfect performance</p>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-xs text-gray-500 font-bold mb-1">UPTIME</p>
-                        <h2 class="text-2xl font-bold">00:00:00</h2>
-                        <p class="text-[10px] text-gray-500 mt-2">Server is stopped</p>
-                    </div>
-                </div>
+        <p>Max Players</p>
+        <input type="number" value="20">
 
-                <div class="glass-card p-8 mb-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-bold text-lg">RAM Control</h3>
-                        <span class="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-xs">Auto-Adjust Enabled</span>
-                    </div>
-                    <input type="range" min="512" max="16384" value="2048" class="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-600">
-                    <div class="flex justify-between text-xs text-gray-500 mt-4">
-                        <span>512 MB</span>
-                        <span class="text-blue-400 font-bold">Current: 2048 MB</span>
-                        <span>16 GB</span>
-                    </div>
-                </div>
-            </div>
+        <p>Server Name</p>
+        <input type="text" value="Nova Server">
+    </div>
 
-            <div id="page-console" class="page">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold">Live Terminal</h2>
-                    <div class="flex gap-2">
-                        <button class="bg-gray-800 text-xs px-3 py-1 rounded border border-gray-700">Clear</button>
-                        <button class="bg-gray-800 text-xs px-3 py-1 rounded border border-gray-700">Download Logs</button>
-                    </div>
-                </div>
-                <div class="console-box rounded-xl shadow-inner">
-                    <p class="text-gray-500">[14:20:01] [System]: Loading panel components...</p>
-                    <p class="text-emerald-500">[14:20:02] [System]: Panel secure connection established.</p>
-                    <p class="text-yellow-500">[14:20:03] [Server]: Server is currently offline. Press START to begin.</p>
-                    <p class="animate-pulse">_</p>
-                </div>
-                <div class="mt-4 flex gap-2">
-                    <input type="text" placeholder="Type command here..." class="flex-1 bg-[#161b22] border border-gray-700 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
-                    <button class="bg-blue-600 px-6 rounded-lg font-bold">SEND</button>
-                </div>
-            </div>
+</div>
 
-            <div id="page-files" class="page">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold">/root/plugins/TAB/</h2>
-                    <div class="flex gap-2">
-                        <button class="bg-blue-600 text-sm px-4 py-2 rounded-lg font-bold">Upload</button>
-                        <button class="bg-gray-800 text-sm px-4 py-2 rounded-lg border border-gray-700">New Folder</button>
-                    </div>
-                </div>
-                <div class="glass-card overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead class="bg-gray-800/50 text-xs text-gray-400 uppercase">
-                            <tr>
-                                <th class="p-4">Name</th>
-                                <th class="p-4">Size</th>
-                                <th class="p-4 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm divide-y divide-gray-800">
-                            <tr class="hover:bg-gray-800/30">
-                                <td class="p-4 flex items-center gap-3"><i class="fas fa-folder text-blue-400"></i> logs</td>
-                                <td class="p-4 text-gray-500">--</td>
-                                <td class="p-4 text-right"><i class="fas fa-trash text-gray-600 cursor-pointer"></i></td>
-                            </tr>
-                            <tr class="hover:bg-gray-800/30">
-                                <td class="p-4 flex items-center gap-3"><i class="fas fa-file-code text-emerald-400"></i> config.yml</td>
-                                <td class="p-4 text-gray-500">12 KB</td>
-                                <td class="p-4 text-right">
-                                    <i class="fas fa-edit mr-3 text-blue-400 cursor-pointer"></i>
-                                    <i class="fas fa-download text-gray-400 cursor-pointer"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<!-- JS -->
+<script>
+let open = false;
 
-            <div id="page-settings" class="page">
-                <h2 class="text-xl font-bold mb-6">Server Settings</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="glass-card p-6">
-                        <label class="block text-xs font-bold text-gray-500 mb-2">SERVER NAME</label>
-                        <input type="text" value="My Epic Server" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm mb-4">
-                        
-                        <label class="block text-xs font-bold text-gray-500 mb-2">MAX PLAYERS</label>
-                        <input type="number" value="20" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm">
-                    </div>
-                    <div class="glass-card p-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-sm font-bold">PVP Mode</span>
-                            <div class="w-10 h-5 bg-blue-600 rounded-full relative"><div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div></div>
-                        </div>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-sm font-bold">Whitelist</span>
-                            <div class="w-10 h-5 bg-gray-700 rounded-full relative"><div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full"></div></div>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-bold">Cracked (Online Mode)</span>
-                            <div class="w-10 h-5 bg-blue-600 rounded-full relative"><div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+function toggleSidebar(){
+    let s = document.getElementById("sidebar");
+    let o = document.getElementById("overlay");
 
-        </div>
-    </main>
+    open = !open;
 
-    <nav class="mobile-nav fixed bottom-0 left-0 right-0 h-16 bg-[#161b22] border-t border-gray-800 hidden justify-around items-center z-50">
-        <button onclick="showPage('home')" class="text-blue-500 flex flex-col items-center gap-1"><i class="fas fa-th-large"></i><span class="text-[10px]">Home</span></button>
-        <button onclick="showPage('console')" class="text-gray-500 flex flex-col items-center gap-1"><i class="fas fa-terminal"></i><span class="text-[10px]">Console</span></button>
-        <button onclick="showPage('files')" class="text-gray-500 flex flex-col items-center gap-1"><i class="fas fa-folder"></i><span class="text-[10px]">Files</span></button>
-        <button onclick="showPage('settings')" class="text-gray-500 flex flex-col items-center gap-1"><i class="fas fa-cog"></i><span class="text-[10px]">Settings</span></button>
-    </nav>
+    if(open){
+        s.classList.add("active");
+        o.classList.add("active");
+    } else {
+        s.classList.remove("active");
+        o.classList.remove("active");
+    }
+}
 
-    <script>
-        function showPage(pageId) {
-            // All pages hide
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // Remove active style from nav
-            document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
-            
-            // Show target
-            document.getElementById('page-' + pageId).classList.add('active');
-            
-            // Highlight nav (PC)
-            const event = window.event;
-            if(event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
-            }
-        }
-    </script>
+function showPage(page){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById("page-"+page).classList.add("active");
+}
+
+function startServer(){
+    let s = document.getElementById("status");
+    s.innerText="● Starting...";
+    s.style.color="yellow";
+
+    setTimeout(()=>{
+        s.innerText="● Online";
+        s.style.color="lime";
+    },2000);
+}
+
+function stopServer(){
+    let s = document.getElementById("status");
+    s.innerText="● Stopping...";
+
+    setTimeout(()=>{
+        s.innerText="● Offline";
+        s.style.color="red";
+    },2000);
+}
+
+function restartServer(){
+    let s = document.getElementById("status");
+    s.innerText="● Restarting...";
+
+    setTimeout(()=>{
+        s.innerText="● Online";
+        s.style.color="lime";
+    },3000);
+}
+</script>
+
 </body>
 </html>
