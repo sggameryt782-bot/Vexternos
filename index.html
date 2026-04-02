@@ -10,7 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* --- ORIGINAL THEME & STYLES --- */
         :root {
             --primary: #00d2ff;
             --secondary: #00ff7f;
@@ -28,39 +27,29 @@
         body { background: var(--bg-dark); color: var(--text); overflow: hidden; height: 100vh; }
 
         /* AUTHENTICATION LAYER */
-        #auth-overlay { position: fixed; inset: 0; z-index: 10000; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; transition: 0.6s ease; }
+        #auth-overlay { position: fixed; inset: 0; z-index: 10000; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
         .auth-card { background: var(--panel-bg); border: 1px solid var(--border); width: 420px; padding: 40px; border-radius: 24px; backdrop-filter: blur(20px); text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
         .auth-title { font-size: 2.5rem; font-weight: 800; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; }
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { display: block; font-size: 0.75rem; color: var(--primary); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
         .input-group input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; }
-        .input-group input:focus { border-color: var(--secondary); }
-        .btn-auth { width: 100%; padding: 15px; background: linear-gradient(to right, var(--primary), var(--secondary)); border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: #000; text-transform: uppercase; margin-top: 10px; transition: 0.2s; }
-        .btn-auth:hover { filter: brightness(1.2); }
+        .btn-auth { width: 100%; padding: 15px; background: linear-gradient(to right, var(--primary), var(--secondary)); border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: #000; text-transform: uppercase; margin-top: 10px; }
         
         .auth-toggle-link { margin-top: 25px; font-size: 0.9rem; color: var(--text-dim); }
-        
-        /* THE FIX: Bulletproof text button */
-        .text-btn { 
-            background: none; border: none; color: var(--secondary); font-family: 'Outfit', sans-serif;
-            font-size: 0.9rem; font-weight: 700; text-decoration: underline; cursor: pointer; 
-            display: inline-block; padding: 5px; transition: 0.2s;
-        }
-        .text-btn:hover { color: white; }
+        .text-btn { background: none; border: none; color: var(--secondary); font-weight: 700; text-decoration: underline; cursor: pointer; padding: 5px; }
 
         /* DASHBOARD STRUCTURE */
-        #app-wrapper { display: grid; grid-template-columns: var(--sidebar-width) 1fr; height: 100vh; transition: var(--transition); opacity: 0; visibility: hidden; }
-        #app-wrapper.active { opacity: 1; visibility: visible; }
+        #app-wrapper { display: grid; grid-template-columns: var(--sidebar-width) 1fr; height: 100vh; transition: var(--transition); display: none; }
+        #app-wrapper.active { display: grid; opacity: 1; }
         #app-wrapper.collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; }
 
         /* SIDEBAR */
         .sidebar { background: rgba(5, 15, 25, 0.95); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; position: relative; }
         .sidebar-header { padding: 30px 20px; display: flex; align-items: center; gap: 15px; }
         .logo-icon { min-width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 1.4rem; }
-        .logo-text { font-weight: 800; font-size: 1.4rem; color: white; white-space: nowrap; transition: 0.3s; }
-        #app-wrapper.collapsed .logo-text { opacity: 0; }
+        .logo-text { font-weight: 800; font-size: 1.4rem; color: white; white-space: nowrap; }
         .nav-item { display: flex; align-items: center; gap: 15px; padding: 15px 20px; margin: 4px 10px; border-radius: 12px; cursor: pointer; color: var(--text-dim); transition: 0.2s; }
-        .nav-item i { width: 25px; text-align: center; font-size: 1.2rem; }
+        .nav-item i { width: 25px; text-align: center; }
         .nav-item:hover, .nav-item.active { background: rgba(0, 210, 255, 0.1); color: var(--primary); }
         .nav-item.active { border-left: 4px solid var(--secondary); color: white; }
         .toggle-btn { position: absolute; bottom: 20px; right: 20px; background: var(--border); border: none; width: 35px; height: 35px; border-radius: 8px; color: white; cursor: pointer; }
@@ -72,40 +61,31 @@
         .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #444; }
         .status-dot.online { background: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
         .status-dot.starting { background: #ffb800; box-shadow: 0 0 10px #ffb800; }
-        .btn-pwr { padding: 10px 20px; border-radius: 8px; border: 1px solid transparent; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-pwr { padding: 10px 20px; border-radius: 8px; border: 1px solid transparent; font-weight: 800; cursor: pointer; }
         .btn-start { background: rgba(0, 255, 127, 0.1); color: var(--secondary); border-color: var(--secondary); }
         .btn-restart { background: rgba(0, 210, 255, 0.1); color: var(--primary); border-color: var(--primary); }
         .btn-stop { background: rgba(255, 51, 102, 0.1); color: #ff3366; border-color: #ff3366; }
 
-        /* Server Switcher Dropdown */
-        .server-switcher { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 8px; outline: none; margin-left: 20px; cursor: pointer; }
+        .server-switcher { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 8px; outline: none; margin-left: 20px; }
 
         .page-content { flex: 1; padding: 40px; overflow-y: auto; }
-        .page { display: none; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* COMPONENTS */
         .stat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 30px; }
         .card { background: var(--panel-bg); border: 1px solid var(--border); padding: 25px; border-radius: 20px; position: relative; }
         .terminal { background: #01050a; border-radius: 15px; height: 450px; display: flex; flex-direction: column; border: 1px solid #1a2332; }
         .term-logs { flex: 1; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; overflow-y: auto; color: #a1b0c0; }
         .term-input { padding: 15px; border-top: 1px solid #1a2332; display: flex; gap: 10px; align-items: center; }
-        .term-input input { background: transparent; border: none; color: white; flex: 1; outline: none; font-family: 'JetBrains Mono'; }
+        .term-input input { background: transparent; border: none; color: white; flex: 1; outline: none; }
 
-        /* Dynamic Lists */
-        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 8px; border: 1px solid transparent; }
-        .list-row:hover { background: rgba(0, 210, 255, 0.05); border-color: var(--border); }
-        .action-btn { background: transparent; border: none; color: var(--text-dim); cursor: pointer; padding: 5px 10px; transition: 0.2s; }
-        .action-btn:hover { color: white; }
-
-        .drag-zone { border: 2px dashed var(--border); padding: 30px; text-align: center; border-radius: 12px; margin-top: 20px; color: var(--text-dim); background: rgba(0,0,0,0.2); }
-        .drag-zone.active { border-color: var(--secondary); background: rgba(0, 255, 127, 0.05); }
+        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 8px; }
+        .action-btn { background: transparent; border: none; color: var(--text-dim); cursor: pointer; padding: 5px 10px; }
 
         .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 11000; }
-        .toast { background: var(--panel-bg); border-left: 4px solid var(--secondary); padding: 15px 25px; border-radius: 8px; margin-top: 10px; animation: slideIn 0.3s forwards; box-shadow: 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
+        .toast { background: var(--panel-bg); border-left: 4px solid var(--secondary); padding: 15px 25px; border-radius: 8px; margin-top: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(10px); animation: slideIn 0.3s forwards; }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-        .toast.fade-out { opacity: 0; transition: 0.3s; }
 
         .toggle-switch { position: relative; width: 40px; height: 20px; background: #333; border-radius: 20px; cursor: pointer; transition: 0.3s; }
         .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.3s; }
@@ -122,12 +102,11 @@
             <h1 class="auth-title">CRYONIX</h1>
             
             <div id="ui-login">
-                <div class="input-group"><label>Email Address</label><input type="email" placeholder="admin@cryonix.xyz" id="l-email"></div>
-                <div class="input-group"><label>Password</label><input type="password" placeholder="••••••••" id="l-pass"></div>
+                <div class="input-group"><label>Email Address</label><input type="email" placeholder="admin@cryonix.xyz"></div>
+                <div class="input-group"><label>Password</label><input type="password" placeholder="••••••••"></div>
                 <button type="button" class="btn-auth" onclick="enterApp()">Login to Nexus</button>
-                
                 <div class="auth-toggle-link">
-                    Need a node? <button type="button" class="text-btn" onclick="document.getElementById('ui-login').style.display='none'; document.getElementById('ui-register').style.display='block';">Create Account</button>
+                    Need a node? <button type="button" class="text-btn" onclick="toggleAuth('register')">Create Account</button>
                 </div>
             </div>
 
@@ -135,11 +114,9 @@
                 <div class="input-group"><label>Operator Name</label><input type="text" placeholder="John Doe"></div>
                 <div class="input-group"><label>Email Address</label><input type="email" placeholder="user@cryonix.xyz"></div>
                 <div class="input-group"><label>New Password</label><input type="password" placeholder="••••••••"></div>
-                <div class="input-group"><label>Confirm Password</label><input type="password" placeholder="••••••••"></div>
                 <button type="button" class="btn-auth" onclick="enterApp()">Deploy Account</button>
-                
                 <div class="auth-toggle-link">
-                    Already synced? <button type="button" class="text-btn" onclick="document.getElementById('ui-register').style.display='none'; document.getElementById('ui-login').style.display='block';">Login Instead</button>
+                    Already synced? <button type="button" class="text-btn" onclick="toggleAuth('login')">Login Instead</button>
                 </div>
             </div>
         </div>
@@ -195,19 +172,15 @@
                         <div class="term-logs" id="logs"></div>
                         <div class="term-input">
                             <span style="color:var(--secondary); font-weight:bold;">$</span>
-                            <input type="text" placeholder="Type command here... (e.g. /help, /say hello)" id="cmd-in" onkeypress="handleCommand(event)">
+                            <input type="text" placeholder="Type command..." id="cmd-in" onkeypress="handleCommand(event)">
                         </div>
                     </div>
                 </div>
 
                 <div id="page-files" class="page">
                     <div class="card">
-                        <div style="display:flex; justify-content:space-between; margin-bottom: 15px;">
-                            <h3>/home/container/</h3>
-                            <button class="btn-auth" style="width: auto; padding: 8px 15px;" onclick="promptNewFile()">+ New File</button>
-                        </div>
-                        <div id="file-list"></div>
-                        <div class="drag-zone" id="drop-zone">Drag & Drop files here to upload instantly</div>
+                        <h3>/home/container/</h3>
+                        <div id="file-list" style="margin-top:20px;"></div>
                     </div>
                 </div>
 
@@ -215,67 +188,155 @@
                     <div class="card">
                         <h3>Plugin Installer</h3>
                         <div style="display:flex; gap:10px; margin: 15px 0;">
-                            <input type="text" id="plug-search" placeholder="Search plugin name..." style="flex:1; padding:10px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:8px;">
+                            <input type="text" id="plug-search" placeholder="Search plugin..." style="flex:1; padding:10px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:8px;">
                             <button class="btn-auth" style="width:auto; padding:10px 20px; margin:0;" onclick="installPlugin()">Install</button>
                         </div>
                         <div id="plugin-list"></div>
                     </div>
                 </div>
 
-                <div id="page-scheduler" class="page">
-                    <div class="card">
-                        <h3>Task Scheduler</h3>
-                        <div style="display:flex; gap:10px; margin: 15px 0;">
-                            <input type="text" id="task-time" placeholder="Time (e.g. */5 * * * *)" style="width:150px; padding:10px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:8px;">
-                            <input type="text" id="task-cmd" placeholder="Command to execute..." style="flex:1; padding:10px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:8px;">
-                            <button class="btn-auth" style="width:auto; padding:10px 20px; margin:0;" onclick="addTask()">Add Task</button>
-                        </div>
-                        <div id="task-list"></div>
-                    </div>
-                </div>
-
-                <div id="page-backups" class="page">
-                    <div class="card">
-                        <div style="display:flex; justify-content:space-between; margin-bottom: 15px;">
-                            <h3>Server Snapshots</h3>
-                            <button class="btn-auth" style="width: auto; padding: 8px 15px; margin:0;" onclick="createBackup()">Create Backup</button>
-                        </div>
-                        <div id="backup-list"></div>
-                    </div>
-                </div>
-
                 <div id="page-network" class="page">
                     <div class="card">
-                        <h3>Network & Custom Domain</h3>
-                        <div class="list-row" style="margin-top:20px;">
-                            <span>Default Allocation</span>
-                            <span style="font-family:'JetBrains Mono'; color:var(--secondary)">cryonixmc.qd.je:25565</span>
-                        </div>
-                        <h4 style="margin-top:20px; color:var(--primary);">Link Custom Domain</h4>
-                        <div style="display:flex; gap:10px; margin-top: 10px;">
-                            <input type="text" placeholder="play.yourdomain.com" style="flex:1; padding:10px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:8px;">
-                            <button class="btn-auth" style="width:auto; padding:10px 20px; margin:0;" onclick="triggerCustomDomain()">Set Domain</button>
-                        </div>
+                        <h3>Domain System</h3>
+                        <input type="text" placeholder="play.yourdomain.com" style="width:100%; padding:10px; margin:15px 0; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white;">
+                        <button class="btn-auth" onclick="triggerCustomDomain()">Request Domain Activation</button>
                     </div>
                 </div>
 
                 <div id="page-analytics" class="page">
                     <div class="card" style="height:350px;">
-                        <h3>Real-time Performance</h3>
+                        <h3>Performance History</h3>
                         <canvas id="chart"></canvas>
                     </div>
                 </div>
 
                 <div id="page-settings" class="page">
                     <div class="card">
-                        <h3>Node Configuration</h3>
-                        <div class="input-group" style="margin-top:20px;">
-                            <label>Java Version</label>
-                            <input type="text" value="Java 17 (LTS)" readonly>
-                        </div>
-                        <div class="input-group">
-                            <label>Hardware Allocation (RAM Limit)</label>
-                            <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(0,0,0,0.3); padding:15px; border-radius:12px; border:1px solid var(--border);">
-                                <span style="font-size:1.5rem; font-weight:bold;"><span id="ram-disp">16</span> GB <span style="font-size:0.8rem; color:var(--text-dim); font-weight:normal;">/ NVMe SSD</span></span>
-                                <button class="btn-auth" style="width:auto; padding:10px 20px; margin:0;" onclick="triggerRAMUpgrade()">Upgrade RAM</button>
-                       
+                        <h3>Resource Upgrade</h3>
+                        <button class="btn-auth" onclick="triggerRAMUpgrade()">Claim +5GB RAM Upgrade</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // CORE STATE
+        let servers = [
+            { id: 0, status: 'offline', logs: ["[System] Ready to boot..."], ip: "cryonixmc.qd.je" },
+            { id: 1, status: 'offline', logs: ["[Proxy] Node standby."], ip: "lobby.cryonixmc.qd.je" }
+        ];
+        let currentSrv = 0;
+        let files = [{name:'world', type:'folder'}, {name:'server.properties', type:'file'}];
+        let plugins = [{name:'EssentialsX', enabled:true}];
+
+        // AUTH LOGIC
+        function toggleAuth(mode) {
+            document.getElementById('ui-login').style.display = mode === 'login' ? 'block' : 'none';
+            document.getElementById('ui-register').style.display = mode === 'register' ? 'block' : 'none';
+        }
+
+        function enterApp() {
+            // Force removal of overlay and show dashboard
+            const overlay = document.getElementById('auth-overlay');
+            const wrapper = document.getElementById('app-wrapper');
+            
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                wrapper.style.display = 'grid';
+                wrapper.classList.add('active');
+                initSystem();
+                notify("Connected", "Nexus session established.");
+            }, 300);
+        }
+
+        // NAVIGATION
+        function nav(id, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            el.classList.add('active');
+        }
+
+        function toggleSide() {
+            document.getElementById('app-wrapper').classList.toggle('collapsed');
+        }
+
+        // SERVER LOGIC
+        function switchServer(val) {
+            currentSrv = parseInt(val);
+            document.getElementById('ip-display').innerText = `IP: ${servers[currentSrv].ip}`;
+            updateStatusUI();
+            renderConsole();
+        }
+
+        function powerAction(act) {
+            const s = servers[currentSrv];
+            if(act === 'START') {
+                s.status = 'starting'; updateStatusUI();
+                appendLog("[System] Initializing JVM...", "var(--primary)");
+                setTimeout(() => { 
+                    s.status = 'online'; updateStatusUI();
+                    appendLog("[Info] Server started on port 25565", "var(--secondary)");
+                    startStats();
+                }, 2000);
+            } else if(act === 'STOP') {
+                s.status = 'offline'; updateStatusUI();
+                appendLog("[System] Process exited.", "#ff3366");
+                stopStats();
+            }
+        }
+
+        function updateStatusUI() {
+            const s = servers[currentSrv].status;
+            document.getElementById('dot').className = 'status-dot ' + s;
+            document.getElementById('st-txt').innerText = s.toUpperCase();
+        }
+
+        function appendLog(msg, color="white") {
+            const l = document.getElementById('logs');
+            servers[currentSrv].logs.push(`<span style="color:${color}">${msg}</span>`);
+            renderConsole();
+        }
+
+        function renderConsole() {
+            const l = document.getElementById('logs');
+            l.innerHTML = servers[currentSrv].logs.join('<br>');
+            l.scrollTop = l.scrollHeight;
+        }
+
+        function handleCommand(e) {
+            if(e.key === 'Enter') {
+                const val = e.target.value;
+                appendLog("> " + val, "var(--primary)");
+                e.target.value = '';
+            }
+        }
+
+        // OTHER SYSTEMS
+        function renderFiles() {
+            document.getElementById('file-list').innerHTML = files.map(f => `
+                <div class="list-row"><span><i class="fas fa-file"></i> ${f.name}</span><i class="fas fa-ellipsis-v"></i></div>
+            `).join('');
+        }
+
+        function installPlugin() {
+            const name = document.getElementById('plug-search').value;
+            if(name) {
+                plugins.push({name, enabled:true});
+                notify("Plugin Installed", name + " is now active.");
+                document.getElementById('plug-search').value = '';
+                renderPlugins();
+            }
+        }
+
+        function renderPlugins() {
+            document.getElementById('plugin-list').innerHTML = plugins.map(p => `
+                <div class="list-row"><span>${p.name}.jar</span><div class="toggle-switch active"></div></div>
+            `).join('');
+        }
+
+        function triggerCustomDomain() {
+            notify("Redirecting", "Connecting to Discord Support...");
+            setTimeout(() =>
