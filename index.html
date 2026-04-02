@@ -10,9 +10,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        /* --- ORIGINAL THEME & STYLES --- */
         :root {
-            --primary: #00d2ff; /* Cyber Blue */
-            --secondary: #00ff7f; /* Neon Green */
+            --primary: #00d2ff;
+            --secondary: #00ff7f;
             --bg-dark: #02080e;
             --panel-bg: rgba(10, 25, 41, 0.8);
             --border: rgba(0, 210, 255, 0.2);
@@ -26,91 +27,83 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         body { background: var(--bg-dark); color: var(--text); overflow: hidden; height: 100vh; }
 
-        /* --- AUTHENTICATION LAYER (The Fix is Here) --- */
-        #auth-overlay {
-            position: fixed; inset: 0; z-index: 10000; background: var(--bg-dark);
-            display: flex; align-items: center; justify-content: center; transition: 0.6s ease;
-        }
-
-        .auth-card {
-            background: var(--panel-bg); border: 1px solid var(--border); width: 420px;
-            padding: 40px; border-radius: 24px; backdrop-filter: blur(20px); text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-        }
-
+        /* AUTHENTICATION LAYER */
+        #auth-overlay { position: fixed; inset: 0; z-index: 10000; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; transition: 0.6s ease; }
+        .auth-card { background: var(--panel-bg); border: 1px solid var(--border); width: 420px; padding: 40px; border-radius: 24px; backdrop-filter: blur(20px); text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
         .auth-title { font-size: 2.5rem; font-weight: 800; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; }
-        
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { display: block; font-size: 0.75rem; color: var(--primary); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
         .input-group input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; }
         .input-group input:focus { border-color: var(--secondary); }
-
-        .btn-auth { width: 100%; padding: 15px; background: linear-gradient(to right, var(--primary), var(--secondary)); border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: #000; text-transform: uppercase; margin-top: 10px; }
-
+        .btn-auth { width: 100%; padding: 15px; background: linear-gradient(to right, var(--primary), var(--secondary)); border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: #000; text-transform: uppercase; margin-top: 10px; transition: 0.2s; }
+        .btn-auth:hover { filter: brightness(1.2); }
         .auth-toggle-link { margin-top: 25px; font-size: 0.9rem; color: var(--text-dim); }
-        /* Guaranteed Clickable Style */
         .auth-toggle-link a { color: var(--secondary); cursor: pointer; font-weight: 700; text-decoration: underline; display: inline-block; padding: 5px; }
 
-        /* --- DASHBOARD STRUCTURE --- */
-        #app-wrapper {
-            display: grid; grid-template-columns: var(--sidebar-width) 1fr;
-            height: 100vh; transition: var(--transition); opacity: 0; visibility: hidden;
-        }
+        /* DASHBOARD STRUCTURE */
+        #app-wrapper { display: grid; grid-template-columns: var(--sidebar-width) 1fr; height: 100vh; transition: var(--transition); opacity: 0; visibility: hidden; }
         #app-wrapper.active { opacity: 1; visibility: visible; }
         #app-wrapper.collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; }
 
-        /* Sidebar */
-        .sidebar {
-            background: rgba(5, 15, 25, 0.95); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; overflow: hidden; position: relative;
-        }
-
+        /* SIDEBAR */
+        .sidebar { background: rgba(5, 15, 25, 0.95); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; position: relative; }
         .sidebar-header { padding: 30px 20px; display: flex; align-items: center; gap: 15px; }
         .logo-icon { min-width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 1.4rem; }
         .logo-text { font-weight: 800; font-size: 1.4rem; color: white; white-space: nowrap; transition: 0.3s; }
         #app-wrapper.collapsed .logo-text { opacity: 0; }
-
-        .nav-item {
-            display: flex; align-items: center; gap: 15px; padding: 15px 20px;
-            margin: 4px 10px; border-radius: 12px; cursor: pointer; color: var(--text-dim); transition: 0.2s;
-        }
+        .nav-item { display: flex; align-items: center; gap: 15px; padding: 15px 20px; margin: 4px 10px; border-radius: 12px; cursor: pointer; color: var(--text-dim); transition: 0.2s; }
         .nav-item i { width: 25px; text-align: center; font-size: 1.2rem; }
         .nav-item:hover, .nav-item.active { background: rgba(0, 210, 255, 0.1); color: var(--primary); }
         .nav-item.active { border-left: 4px solid var(--secondary); color: white; }
-
         .toggle-btn { position: absolute; bottom: 20px; right: 20px; background: var(--border); border: none; width: 35px; height: 35px; border-radius: 8px; color: white; cursor: pointer; }
 
-        /* Main UI */
-        .main-container { display: flex; flex-direction: column; background: radial-gradient(circle at top right, rgba(0, 255, 127, 0.03), transparent); }
-
+        /* MAIN UI */
+        .main-container { display: flex; flex-direction: column; background: radial-gradient(circle at top right, rgba(0, 255, 127, 0.03), transparent); overflow: hidden; }
         .top-bar { padding: 20px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(8, 20, 35, 0.5); }
-        
         .server-status { display: flex; align-items: center; gap: 10px; font-weight: 700; }
         .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #444; }
         .status-dot.online { background: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
-
+        .status-dot.starting { background: #ffb800; box-shadow: 0 0 10px #ffb800; }
         .btn-pwr { padding: 10px 20px; border-radius: 8px; border: 1px solid transparent; font-weight: 800; cursor: pointer; transition: 0.2s; }
         .btn-start { background: rgba(0, 255, 127, 0.1); color: var(--secondary); border-color: var(--secondary); }
+        .btn-restart { background: rgba(0, 210, 255, 0.1); color: var(--primary); border-color: var(--primary); }
         .btn-stop { background: rgba(255, 51, 102, 0.1); color: #ff3366; border-color: #ff3366; }
 
-        .page { display: none; padding: 40px; animation: fadeIn 0.4s ease; }
+        /* Server Switcher Dropdown */
+        .server-switcher { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 8px; outline: none; margin-left: 20px; cursor: pointer; }
+
+        .page-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .page { display: none; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Widgets */
-        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
-        .card { background: var(--panel-bg); border: 1px solid var(--border); padding: 25px; border-radius: 20px; }
-        
+        /* COMPONENTS */
+        .stat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 30px; }
+        .card { background: var(--panel-bg); border: 1px solid var(--border); padding: 25px; border-radius: 20px; position: relative; }
         .terminal { background: #01050a; border-radius: 15px; height: 450px; display: flex; flex-direction: column; border: 1px solid #1a2332; }
         .term-logs { flex: 1; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; overflow-y: auto; color: #a1b0c0; }
-        .term-input { padding: 15px; border-top: 1px solid #1a2332; display: flex; gap: 10px; }
-        .term-input input { background: transparent; border: none; color: white; flex: 1; outline: none; }
+        .term-input { padding: 15px; border-top: 1px solid #1a2332; display: flex; gap: 10px; align-items: center; }
+        .term-input input { background: transparent; border: none; color: white; flex: 1; outline: none; font-family: 'JetBrains Mono'; }
+
+        /* Dynamic Lists */
+        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 8px; border: 1px solid transparent; }
+        .list-row:hover { background: rgba(0, 210, 255, 0.05); border-color: var(--border); }
+        .action-btn { background: transparent; border: none; color: var(--text-dim); cursor: pointer; padding: 5px 10px; transition: 0.2s; }
+        .action-btn:hover { color: white; }
+
+        .drag-zone { border: 2px dashed var(--border); padding: 30px; text-align: center; border-radius: 12px; margin-top: 20px; color: var(--text-dim); background: rgba(0,0,0,0.2); }
+        .drag-zone.active { border-color: var(--secondary); background: rgba(0, 255, 127, 0.05); }
 
         .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 11000; }
-        .toast { background: var(--panel-bg); border-left: 4px solid var(--secondary); padding: 15px 25px; border-radius: 8px; margin-top: 10px; animation: slideIn 0.3s forwards; }
+        .toast { background: var(--panel-bg); border-left: 4px solid var(--secondary); padding: 15px 25px; border-radius: 8px; margin-top: 10px; animation: slideIn 0.3s forwards; box-shadow: 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .toast.fade-out { opacity: 0; transition: 0.3s; }
 
-        .hidden { display: none !important; }
+        /* Toggle Switch */
+        .toggle-switch { position: relative; width: 40px; height: 20px; background: #333; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle-switch.active { background: var(--secondary); }
+        .toggle-switch.active::after { transform: translateX(20px); }
     </style>
 </head>
 <body>
@@ -120,43 +113,19 @@
     <div id="auth-overlay">
         <div class="auth-card">
             <h1 class="auth-title">CRYONIX</h1>
-            
             <div id="ui-login">
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <input type="email" placeholder="admin@cryonix.xyz" id="l-email">
-                </div>
-                <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="••••••••" id="l-pass">
-                </div>
+                <div class="input-group"><label>Email Address</label><input type="email" placeholder="admin@cryonix.xyz" id="l-email"></div>
+                <div class="input-group"><label>Password</label><input type="password" placeholder="••••••••" id="l-pass"></div>
                 <button class="btn-auth" onclick="enterApp()">Login to Nexus</button>
-                <div class="auth-toggle-link">
-                    Need a node? <a onclick="forceShowRegister()">Create Account</a>
-                </div>
+                <div class="auth-toggle-link">Need a node? <a onclick="forceShowRegister()">Create Account</a></div>
             </div>
-
             <div id="ui-register" style="display: none;">
-                <div class="input-group">
-                    <label>Operator Name</label>
-                    <input type="text" placeholder="John Doe">
-                </div>
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <input type="email" placeholder="user@cryonix.xyz">
-                </div>
-                <div class="input-group">
-                    <label>New Password</label>
-                    <input type="password" placeholder="••••••••">
-                </div>
-                <div class="input-group">
-                    <label>Confirm Password</label>
-                    <input type="password" placeholder="••••••••">
-                </div>
+                <div class="input-group"><label>Operator Name</label><input type="text" placeholder="John Doe"></div>
+                <div class="input-group"><label>Email Address</label><input type="email" placeholder="user@cryonix.xyz"></div>
+                <div class="input-group"><label>New Password</label><input type="password" placeholder="••••••••"></div>
+                <div class="input-group"><label>Confirm Password</label><input type="password" placeholder="••••••••"></div>
                 <button class="btn-auth" onclick="enterApp()">Deploy Account</button>
-                <div class="auth-toggle-link">
-                    Already synced? <a onclick="forceShowLogin()">Login Instead</a>
-                </div>
+                <div class="auth-toggle-link">Already synced? <a onclick="forceShowLogin()">Login Instead</a></div>
             </div>
         </div>
     </div>
@@ -167,18 +136,16 @@
                 <div class="logo-icon"><i class="fas fa-microchip"></i></div>
                 <div class="logo-text">CRYONIX</div>
             </div>
-
             <nav>
                 <div class="nav-item active" onclick="nav('console', this)"><i class="fas fa-terminal"></i> <span>Console</span></div>
                 <div class="nav-item" onclick="nav('files', this)"><i class="fas fa-folder"></i> <span>Files</span></div>
                 <div class="nav-item" onclick="nav('plugins', this)"><i class="fas fa-plug"></i> <span>Plugins</span></div>
+                <div class="nav-item" onclick="nav('scheduler', this)"><i class="fas fa-clock"></i> <span>Scheduler</span></div>
                 <div class="nav-item" onclick="nav('backups', this)"><i class="fas fa-database"></i> <span>Backups</span></div>
                 <div class="nav-item" onclick="nav('network', this)"><i class="fas fa-network-wired"></i> <span>Network</span></div>
-                <div class="nav-item" onclick="nav('startup', this)"><i class="fas fa-rocket"></i> <span>Startup</span></div>
                 <div class="nav-item" onclick="nav('analytics', this)"><i class="fas fa-chart-line"></i> <span>Analytics</span></div>
                 <div class="nav-item" onclick="nav('settings', this)"><i class="fas fa-cog"></i> <span>Settings</span></div>
             </nav>
-
             <button class="toggle-btn" onclick="toggleSide()"><i class="fas fa-chevron-left" id="side-icon"></i></button>
         </aside>
 
@@ -187,139 +154,131 @@
                 <div class="server-status">
                     <div class="status-dot" id="dot"></div>
                     <span id="st-txt">OFFLINE</span>
-                    <span style="margin-left: 20px; color: var(--primary); font-family: 'JetBrains Mono';" id="ip">IP: cryonixmc.qd.je</span>
+                    <select class="server-switcher" id="server-select" onchange="switchServer(this.value)">
+                        <option value="0">Main Survival [1.20.1]</option>
+                        <option value="1">Lobby Proxy [Bungee]</option>
+                    </select>
+                    <span style="margin-left: 15px; color: var(--primary); font-family: 'JetBrains Mono';" id="ip-display">IP: cryonixmc.qd.je</span>
                 </div>
                 <div class="power-controls">
-                    <button class="btn-pwr btn-start" onclick="srvAction('START')">START</button>
-                    <button class="btn-pwr btn-stop" onclick="srvAction('STOP')">STOP</button>
+                    <button class="btn-pwr btn-start" onclick="powerAction('START')">START</button>
+                    <button class="btn-pwr btn-restart" onclick="powerAction('RESTART')">RESTART</button>
+                    <button class="btn-pwr btn-stop" onclick="powerAction('STOP')">STOP</button>
                 </div>
             </header>
 
             <div class="page-content">
                 <div id="page-console" class="page active">
                     <div class="stat-grid">
-                        <div class="card"><small>CPU</small><h2 id="cpu">0.0%</h2></div>
-                        <div class="card"><small>RAM</small><h2 id="ram">0 / 16GB</h2></div>
-                        <div class="card"><small>PLAYERS</small><h2>0 / 100</h2></div>
-                        <div class="card"><small>TPS</small><h2>20.0</h2></div>
+                        <div class="card"><small>CPU</small><h2 id="st-cpu">0.0%</h2></div>
+                        <div class="card"><small>RAM</small><h2 id="st-ram">0 / 16GB</h2></div>
+                        <div class="card"><small>PLAYERS</small><h2 id="st-ply">0 / 100</h2></div>
+                        <div class="card"><small>TPS</small><h2 id="st-tps">20.0</h2></div>
+                        <div class="card"><small>PING</small><h2 id="st-ping">12ms</h2></div>
                     </div>
                     <div class="terminal">
-                        <div class="term-logs" id="logs">
-                            [System] Ready to start instance...<br>
-                        </div>
+                        <div class="term-logs" id="logs"></div>
                         <div class="term-input">
-                            <span style="color:var(--secondary)">$</span>
-                            <input type="text" placeholder="Type command..." id="cmd-in" onkeypress="handleCmd(event)">
+                            <span style="color:var(--secondary); font-weight:bold;">$</span>
+                            <input type="text" placeholder="Type command here... (e.g. /help, /say hello)" id="cmd-in" onkeypress="handleCommand(event)">
                         </div>
                     </div>
                 </div>
 
-                <div id="page-files" class="page"><div class="card"><h3>File Manager</h3><hr style="margin:15px 0; border:0; border-top:1px solid var(--border);"><p>Accessing /home/container...</p></div></div>
-                <div id="page-plugins" class="page"><div class="card"><h3>Plugin Installer</h3><p style="margin-top:20px;">Search SpigotMC database...</p></div></div>
-                <div id="page-backups" class="page"><div class="card"><h3>Server Snapshots</h3><button class="btn-auth" style="width:200px; margin-top:20px;">Create Backup</button></div></div>
-                <div id="page-network" class="page"><div class="card"><h3>Allocations</h3><p>Port: 25565 (Primary)</p></div></div>
-                <div id="page-startup" class="page"><div class="card"><h3>Startup Variables</h3><input type="text" value="java -Xmx{{RAM}}G -jar server.jar" class="btn-auth" style="background:rgba(0,0,0,0.5); text-align:left; color:white;"></div></div>
-                <div id="page-analytics" class="page"><div class="card" style="height:300px;"><h3>Live Performance</h3><canvas id="chart"></canvas></div></div>
-                <div id="page-settings" class="page"><div class="card"><h3>Node Settings</h3><p>Allocated RAM: 16GB</p></div></div>
+                <div id="page-files" class="page">
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 15px;">
+                            <h3>/home/container/</h3>
+                            <button class="btn-auth" style="width: auto; padding: 8px 15px;" onclick="promptNewFile()">+ New File</button>
+                        </div>
+                        <div id="file-list"></div>
+                        <div class="drag-zone" id="drop-zone">Drag & Drop files here to upload instantly</div>
+                    </div>
+                </div>
+
+                <div id="page-plugins" class="page">
+                    <div class="card">
+                        <h3>Plugin Installer</h3>
+                        <div style="display:flex; gap:10px; margin: 15px 0;">
+                            <input type="text" id="plug-search" placeholder="Search plugin name..." style="flex:1; padding:10px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:8px;">
+                            <button class="btn-auth" style="width:auto; padding:10px 20px; margin:0;" onclick="installPlugin()">Install</button>
+                        </div>
+                        <div id="plugin-list"></div>
+                    </div>
+                </div>
+
+                <div id="page-scheduler" class="page">
+                    <div class="card">
+                        <h3>Task Scheduler</h3>
+                        <div style="display:flex; gap:10px; margin: 15px 0;">
+                            <input type="text" id="task-time" placeholder="Time (e.g. */5 * * * *)" style="width:150px; padding:10px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:8px;">
+                            <input type="text" id="task-cmd" placeholder="Command to execute..." style="flex:1; padding:10px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:8px;">
+                            <button class="btn-auth" style="width:auto; padding:10px 20px; margin:0;" onclick="addTask()">Add Task</button>
+                        </div>
+                        <div id="task-list"></div>
+                    </div>
+                </div>
+
+                <div id="page-backups" class="page">
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 15px;">
+                            <h3>Server Snapshots</h3>
+                            <button class="btn-auth" style="width: auto; padding: 8px 15px; margin:0;" onclick="createBackup()">Create Backup</button>
+                        </div>
+                        <div id="backup-list"></div>
+                    </div>
+                </div>
+
+                <div id="page-network" class="page">
+                    <div class="card">
+                        <h3>Network & Custom Domain</h3>
+                        <div class="list-row" style="margin-top:20px;">
+                            <span>Default Allocation</span>
+                            <span style="font-family:'JetBrains Mono'; color:var(--secondary)">cryonixmc.qd.je:25565</span>
+                        </div>
+                        <h4 style="margin-top:20px; color:var(--primary);">Link Custom Domain</h4>
+                        <div style="display:flex; gap:10px; margin-top: 10px;">
+                            <input type="text" placeholder="play.yourdomain.com" style="flex:1; padding:10px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:8px;">
+                            <button class="btn-auth" style="width:auto; padding:10px 20px; margin:0;" onclick="triggerCustomDomain()">Set Domain</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-analytics" class="page">
+                    <div class="card" style="height:350px;">
+                        <h3>Real-time Performance</h3>
+                        <canvas id="chart"></canvas>
+                    </div>
+                </div>
+
+                <div id="page-settings" class="page">
+                    <div class="card">
+                        <h3>Node Configuration</h3>
+                        <div class="input-group" style="margin-top:20px;">
+                            <label>Java Version</label>
+                            <input type="text" value="Java 17 (LTS)" readonly>
+                        </div>
+                        <div class="input-group">
+                            <label>Hardware Allocation (RAM Limit)</label>
+                            <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(0,0,0,0.3); padding:15px; border-radius:12px; border:1px solid var(--border);">
+                                <span style="font-size:1.5rem; font-weight:bold;"><span id="ram-disp">16</span> GB <span style="font-size:0.8rem; color:var(--text-dim); font-weight:normal;">/ NVMe SSD</span></span>
+                                <button class="btn-auth" style="width:auto; padding:10px 20px; margin:0;" onclick="triggerRAMUpgrade()">Upgrade RAM</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
     <script>
-        // --- THE FIX: BULLETPROOF AUTH SWITCH ---
-        function forceShowRegister() {
-            document.getElementById('ui-login').style.setProperty('display', 'none', 'important');
-            document.getElementById('ui-register').style.setProperty('display', 'block', 'important');
-        }
+        // --- 0. STATE MANAGEMENT ---
+        let servers = [
+            { id: 0, status: 'offline', logs: ["[System] Server instance container initialized.\n[System] Awaiting boot signal..."], ip: "cryonixmc.qd.je", cpu: 0, ram: 0, ply: 0 },
+            { id: 1, status: 'offline', logs: ["[Proxy] BungeeCord node ready."], ip: "lobby.cryonixmc.qd.je", cpu: 0, ram: 0, ply: 0 }
+        ];
+        let cSrv = 0; // Current Server Index
+        let telemetryTimer;
+        let bootTimer;
 
-        function forceShowLogin() {
-            document.getElementById('ui-register').style.setProperty('display', 'none', 'important');
-            document.getElementById('ui-login').style.setProperty('display', 'block', 'important');
-        }
-
-        function enterApp() {
-            const auth = document.getElementById('auth-overlay');
-            const app = document.getElementById('app-wrapper');
-            auth.style.opacity = '0';
-            setTimeout(() => {
-                auth.style.display = 'none';
-                app.classList.add('active');
-                notify("SUCCESS", "Nexus Connection Secure.");
-                initChart();
-            }, 600);
-        }
-
-        // --- SIDEBAR SLIDE ---
-        function toggleSide() {
-            const app = document.getElementById('app-wrapper');
-            const icon = document.getElementById('side-icon');
-            app.classList.toggle('collapsed');
-            icon.className = app.classList.contains('collapsed') ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
-        }
-
-        // --- NAVIGATION (SPA) ---
-        function nav(pageId, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            el.classList.add('active');
-        }
-
-        // --- POWER LOGIC ---
-        let statInt;
-        function srvAction(type) {
-            const dot = document.getElementById('dot');
-            const txt = document.getElementById('st-txt');
-            const logs = document.getElementById('logs');
-
-            if(type === 'START') {
-                dot.classList.add('online');
-                txt.innerText = 'ONLINE';
-                logs.innerHTML += `<div style="color:var(--secondary)">[INFO] Booting Paper-1.20.1.jar...</div>`;
-                startStats();
-            } else {
-                dot.classList.remove('online');
-                txt.innerText = 'OFFLINE';
-                logs.innerHTML += `<div style="color:#ff3366">[WARN] Shutdown signal received.</div>`;
-                clearInterval(statInt);
-            }
-        }
-
-        function handleCmd(e) {
-            if(e.key === 'Enter') {
-                const i = document.getElementById('cmd-in');
-                document.getElementById('logs').innerHTML += `<div><span style="color:var(--primary)">$</span> ${i.value}</div>`;
-                i.value = '';
-            }
-        }
-
-        function notify(title, msg) {
-            const box = document.getElementById('toasts');
-            const t = document.createElement('div');
-            t.className = 'toast';
-            t.innerHTML = `<strong>${title}</strong><br><small>${msg}</small>`;
-            box.appendChild(t);
-            setTimeout(() => t.remove(), 3000);
-        }
-
-        function startStats() {
-            statInt = setInterval(() => {
-                document.getElementById('cpu').innerText = (Math.random() * 25 + 5).toFixed(1) + '%';
-                document.getElementById('ram').innerText = (Math.random() * 2 + 4).toFixed(1) + ' / 16GB';
-            }, 2000);
-        }
-
-        function initChart() {
-            const ctx = document.getElementById('chart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['1', '2', '3', '4', '5'],
-                    datasets: [{ label: 'Load', data: [10, 25, 15, 30, 20], borderColor: '#00ff7f', tension: 0.4 }]
-                },
-                options: { maintainAspectRatio: false }
-            });
-        }
-    </script>
-</body>
-</html>
+        // Dy
